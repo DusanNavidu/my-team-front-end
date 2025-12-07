@@ -23,3 +23,8 @@ export const refreshTokens = async (refreshToken: string) => {
   })
   return res.data
 }
+
+export const getRole = async () => {
+  const res = await api.get("/auth/role")
+  return res.data
+}

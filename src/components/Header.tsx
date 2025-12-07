@@ -12,7 +12,15 @@ export default function Header() {
     navigate("/login")
   }
 
+  const hasRole = (role: string) => {
+      return user?.roles?.includes(role) || false;
+  };
+
+  const isPlayer = hasRole('PLAYER');
+  const isOrganizer = hasRole('ORGANIZER');
+
   const hideTopButtons = location.pathname === "/organizer-register";
+  const userIsLoggedIn = !!user;
 
   return (
     <header className="w-full h-[150px] bg-gray-900 fixed top-0 left-0 z-4 p-4 shadow-md flex">
@@ -24,7 +32,7 @@ export default function Header() {
           <h1 className="text-5xl font-extrabold w-[250px] animate-float bg-gradient-to-r from-blue-600 via-white to-blue-600 bg-clip-text text-transparent drop-shadow-lg text-shadow-lg">MY TEAM</h1>
           
           <div className="flex space-x-4 items-center">
-            {!hideTopButtons && (
+            {userIsLoggedIn && !hideTopButtons && !isPlayer && !isOrganizer && (
               <>
                 <Link to="/" className="text-amber-50">
                   <button className="font-bold p-2 border-e-2 pr-8">
@@ -34,7 +42,7 @@ export default function Header() {
               </>
             )}
             
-            {!hideTopButtons && (
+            {(userIsLoggedIn && !hideTopButtons && !isPlayer && !isOrganizer) && (
               <>
                 <Link to="/organizer-register" className="text-amber-50">
                   <button className="font-bold p-2 border-e-2 pr-8">
@@ -45,7 +53,7 @@ export default function Header() {
             )}
             
 
-            {!hideTopButtons && (
+            {(userIsLoggedIn && !hideTopButtons && !isPlayer && !isOrganizer) && (
               <>
                 <Link to="/" className="text-amber-50">
                   <button className="font-bold p-2">
@@ -72,7 +80,7 @@ export default function Header() {
             )}
 
             {!hideTopButtons && (
-              <Link to="/events" className="hover:underline hover:underline-offset-4 hover:decoration-2 transition-all duration-500 text-amber-50">
+              <Link to="/event" className="hover:underline hover:underline-offset-4 hover:decoration-2 transition-all duration-500 text-amber-50">
                 Events
               </Link>
             )}

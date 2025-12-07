@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/authContext";
 
 export default function Home() {
+
+    const { user, setUser } = useAuth()
+  
+  const hasRole = (role: string) => {
+      return user?.roles?.includes(role) || false;
+  };
+
+  const isPlayer = hasRole('PLAYER');
+  const isOrganizer = hasRole('ORGANIZER');
+
+  const userIsLoggedIn = !!user;
 
   const images = [
     "src/assets/image/soccer-players-action-professional-stadium.jpg",
@@ -58,14 +70,26 @@ export default function Home() {
             with the ability to build future plans, goals, and dreams for their
             sports journey.
           </p>
-          <div className="mt-6">
-            <button className="bg-orange-400 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
-              Create Team +
-            </button>
-            <button className="ml-4 bg-blue-600 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
-              Share Your Ideas 
-            </button>
-          </div>
+          {userIsLoggedIn && !isOrganizer && (
+            <div className="mt-6">
+              <button className="bg-orange-400 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
+                Create Team +
+              </button>
+              <button className="ml-4 bg-blue-600 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
+                Share Your Ideas 
+              </button>
+            </div>
+          )}
+          {userIsLoggedIn && !isPlayer && (
+            <div className="mt-6">
+              <button className="bg-orange-400 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
+                Create Event +
+              </button>
+              <button className="ml-4 bg-blue-600 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
+                Share Your Ideas 
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
