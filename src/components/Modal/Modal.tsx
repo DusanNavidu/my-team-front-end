@@ -11,7 +11,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-[500px] shadow-xl relative">
+            <div className="bg-white rounded-xl p-6 w-full max-w-md md:max-w-lg lg:max-w-xl shadow-xl relative overflow-auto max-h-[90vh]">
                 
                 <button
                     onClick={onClose}

@@ -11,6 +11,7 @@ export default function Home() {
 
   const isPlayer = hasRole('PLAYER');
   const isOrganizer = hasRole('ORGANIZER');
+  const isUser = hasRole('USER');
 
   const userIsLoggedIn = !!user;
 
@@ -80,7 +81,7 @@ export default function Home() {
               </button>
             </div>
           )}
-          {userIsLoggedIn && !isPlayer && (
+          {userIsLoggedIn && !isPlayer && !isUser && (
             <div className="mt-6">
               <button className="bg-orange-400 text-amber-50 font-semibold p-4 rounded transition-all duration-200 hover:rounded-3xl">
                 Create Event +

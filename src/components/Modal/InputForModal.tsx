@@ -10,7 +10,12 @@ interface InputProps {
     disabled?: boolean;
     error?: string;
     className?: string;
+    accept?: string;
+    min?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+    // NEW → file input handler
+    onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -23,7 +28,10 @@ const Input: React.FC<InputProps> = ({
     disabled = false,
     error,
     className = "",
+    accept,
+    min,
     onChange,
+    onFileChange,
 }) => {
     return (
         <div className="w-full mb-4">
@@ -36,12 +44,19 @@ const Input: React.FC<InputProps> = ({
             <input
                 type={type}
                 name={name}
-                value={value}
+                value={type === "file" ? undefined : value}  
                 placeholder={placeholder}
                 disabled={disabled}
-                onChange={onChange}
-                className={`
-                    w-full px-4 py-2 rounded-lg border 
+                accept={accept}
+                min={min}
+                onChange={(e) => {
+                    if (type === "file" && onFileChange) {
+                        onFileChange(e); // handle files
+                    } else if (onChange) {
+                        onChange(e); // normal text input
+                    }
+                }}
+                className={`w-full px-4 py-2 rounded-lg border 
                     border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300
                     outline-none transition-all duration-200
                     ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}

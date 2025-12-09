@@ -17,7 +17,7 @@ export default function OrganizerRegisterPage() {
     const [committeeBannerImageURL, setCommitteeBannerImageURL] = useState<File | null>(null);
     const [bannerPreviewUrl, setBannerPreviewUrl] = useState<string | null>(null);
 
-    const [isLoading, setIsLoading] = useState(false); // Loading state
+    const [isLoading, setIsLoading] = useState(false);
     
     console.log("Selected Logo File (State):", committeeLogoImageURL);
     console.log("Selected Banner File (State):", committeeBannerImageURL);

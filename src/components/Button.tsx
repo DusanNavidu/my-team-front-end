@@ -7,7 +7,7 @@ interface ButtonProps {
     children: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     type?: 'submit' | 'button' | 'reset';
-    color?: 'blue' | 'green' | 'red'; // Button Color variants
+    color?: 'blue' | 'green' | 'red' | 'gray'; // Button Color variants
     disabled?: boolean;
     className?: string; // Additional classes
 }
@@ -17,6 +17,7 @@ const colorClasses = {
     blue: 'bg-blue-600 hover:bg-blue-700',
     green: 'bg-green-600 hover:bg-green-700',
     red: 'bg-red-600 hover:bg-red-700',
+    gray: 'bg-gray-600 hover:bg-gray-700',
 };
 
 // Ripple Animation Type Definition

@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { useAuth } from "../context/authContext"
 import Layout from "../components/Layout"
 import OrganizerRegisterPage from "../pages/Organizer_register_page"
+import LiveScores from "../pages/LiveScores"
 
 const Index = lazy(() => import("../pages"))
 const Login = lazy(() => import("../pages/Login"))
@@ -10,6 +11,7 @@ const Register = lazy(() => import("../pages/Register"))
 const Home = lazy(() => import("../pages/Home"))
 const Post = lazy(() => import("../pages/Post"))
 const Event = lazy(() => import("../pages/Event"))
+const Profile = lazy(() => import("../pages/Profile"))
 
 type RequireAuthTypes = { children: ReactNode; roles?: string[] }
 
@@ -65,6 +67,8 @@ export default function Router() {
             <Route path="/post" element={<Post />} />
             <Route path="/organizer-register" element={<OrganizerRegisterPage />} />
             <Route path="/event" element={<Event />} />
+            <Route path="/live-scores" element={<LiveScores />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
       </Suspense>
