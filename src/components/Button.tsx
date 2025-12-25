@@ -7,7 +7,7 @@ interface ButtonProps {
     children: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     type?: 'submit' | 'button' | 'reset';
-    color?: 'blue' | 'green' | 'red' | 'gray'; // Button Color variants
+    color?: 'blue' | 'green' | 'red' | 'gray' | 'black' | 'yellow' | 'orange' | 'darkBlue'; // Button Color variants
     disabled?: boolean;
     className?: string; // Additional classes
 }
@@ -18,6 +18,10 @@ const colorClasses = {
     green: 'bg-green-600 hover:bg-green-700',
     red: 'bg-red-600 hover:bg-red-700',
     gray: 'bg-gray-600 hover:bg-gray-700',
+    black: 'bg-black hover:bg-gray-900',
+    yellow: 'bg-yellow-500 hover:bg-yellow-600',
+    orange: 'bg-orange-500 hover:bg-orange-600',
+    darkBlue: 'bg-blue-800 hover:bg-blue-900',
 };
 
 // Ripple Animation Type Definition
@@ -57,7 +61,6 @@ const Button: React.FC<ButtonProps> = ({
     className = '',
 }) => {
     
-    // State to hold active ripple effects
     const [ripples, setRipples] = useState<Ripple[]>([]);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,35 +68,29 @@ const Button: React.FC<ButtonProps> = ({
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
         
-        // 1. Calculate the click position relative to the button
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         
-        // 2. Determine the maximum size for the ripple (to cover the button)
         const size = Math.max(button.clientWidth, button.clientHeight);
 
-        // 3. Create the new ripple object
         const newRipple: Ripple = {
             x,
             y,
             size,
-            key: Date.now(), // Unique key for rendering
+            key: Date.now(),
         };
 
         setRipples(prevRipples => [...prevRipples, newRipple]);
 
-        // 4. Remove the ripple after the animation is complete (e.g., 600ms)
         setTimeout(() => {
             setRipples(prevRipples => prevRipples.filter(r => r.key !== newRipple.key));
-        }, 600); // Must match the CSS transition duration
+        }, 600);
 
-        // 5. Execute the original onClick handler
         if (onClick && !disabled) {
             onClick(event);
         }
     };
 
-    // Combine default classes, color classes, and custom classes
     const combinedClassName = `
         relative overflow-hidden
         text-white font-semibold py-2 px-4 rounded
@@ -110,7 +107,6 @@ const Button: React.FC<ButtonProps> = ({
             onClick={handleClick}
             disabled={disabled}
         >
-            {/* Ripple Elements */}
             {ripples.map(ripple => (
                 <span
                     key={ripple.key}

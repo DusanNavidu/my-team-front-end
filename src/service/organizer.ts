@@ -72,3 +72,49 @@ export const getOrganizerDetails = async () => {
     const res = await api.get("/organizer/me");
     return res.data;
 }
+
+export const updateOrganizerDetails = async (
+    committeeName: string,
+    contact_no: string,
+    eventPlace: string,
+    committeeLogoImageFile: File | null,
+    committeeBannerImageFile: File | null
+) => {
+    try {
+        const formData = new FormData();
+        formData.append("committeeName", committeeName);
+        formData.append("contact_no", contact_no);
+        formData.append("eventPlace", eventPlace);
+
+        if (committeeLogoImageFile) {
+            formData.append("committeeLogoImage", committeeLogoImageFile);
+        }
+        if (committeeBannerImageFile) {
+            formData.append("committeeBannerImage", committeeBannerImageFile);
+        }
+
+        console.log("Submitting Organizer Profile Update...");
+
+        const response = await api.put("/organizer/update", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        console.log("Organizer Profile Updated Successfully.");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getOrganizerDetailsForVisitUsers = async (organizerId: string) => {
+  try {
+    const res = await api.get(`/organizer/profile/view/${organizerId}`);
+    // Backend එකෙන් එවන්නේ { message: "...", data: organizer } නිසා res.data.data ගත යුතුය
+    return res.data.data; 
+  } catch (error) {
+    console.error("Error fetching organizer details for visit:", error);
+    throw error;
+  }
+};

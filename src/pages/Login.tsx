@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/authContext"
 import { login, getMyDetails } from "../service/auth"
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { showAlert } from "../components/Swail";
 
 export default function Login() {
   const [username, setEmail] = useState("")
@@ -23,23 +24,70 @@ export default function Login() {
     try {
       const data: any = await login(username, password)
 
+      if (data?.status === 403 || data?.message === "User is not active") {
+        showAlert({
+          icon: "error",
+          title: "Account Deactivated",
+          text: "Your account has been deactivated. Please contact support.",
+        });
+        setErrorMessage("Login failed: your account is deactivated.");
+        return;
+      }
+
       if (data?.data?.accessToken) {
         await localStorage.setItem("accessToken", data.data.accessToken)
         await localStorage.setItem("refreshToken", data.data.refreshToken)
 
         const resData = await getMyDetails()
-
         setUser(resData.data)
 
-        navigate("/home")
+        const roles: string[] = resData.data.roles || [];
+
+        if (roles.includes("ADMIN")) {
+          navigate("/admin/dashboard");
+        } else if (roles.includes("ORGANIZER") || roles.includes("PLAYER") || roles.includes("USER")) {
+          navigate("/home");
+        } else {
+          showAlert({
+            icon: "error",
+            title: "Login failed",
+            text: "Please check your credentials and try again.",
+          });
+          setErrorMessage("Login failed, invalid user role.")
+        }
       } else {
-        alert("Login failed. Please try again.")
+        showAlert({
+          icon: "error",
+          title: "Login failed",
+          text: "Please check your credentials and try again.",
+        });
         setErrorMessage("Login failed, please check your credentials.")
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err)
-      alert("Login failed. Please try again.")
-      setErrorMessage("An error occurred during login. Please try again.")
+      
+      if (err.response?.status === 403) {
+        showAlert({
+          icon: "error",
+          title: "Account Deactivated",
+          text: "Your account has been deactivated. Please contact support.",
+        });
+        setErrorMessage("Login failed: your account is deactivated.");
+      } else if (err.response?.status === 401) {
+        showAlert({
+          icon: "error",
+          title: "Login failed",
+          text: "Invalid email or password. Please try again.",
+        });
+        setErrorMessage("Login failed: invalid credentials.");
+      } else {
+        showAlert({
+          icon: "error",
+          title: "Login failed",
+          text: "An unexpected error occurred. Please try again.",
+        });
+        setErrorMessage("An error occurred during login. Please try again.");
+      }
     }
   }
 

@@ -1,15 +1,15 @@
-// src/pages/Organizer_register_page.tsx (FINAL FIX)
-
 import { useEffect, useState } from "react";
 import { OrganizerRegister } from "../service/organizer";
 import Input from "../components/Input";
 import Select from "../components/Select";
 import { showAlert } from "../components/Swail";
+import { useNavigate } from "react-router-dom";
 
 export default function OrganizerRegisterPage() {
     const [committeeName, setCommitteeName] = useState("")
     const [contact_no, setContactNo] = useState("")
     const [eventPlace, setEventPlace] = useState("");
+    const navigate = useNavigate();
 
     const [committeeLogoImageURL, setCommitteeLogoImageURL] = useState<File | null>(null);
     const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
@@ -73,7 +73,8 @@ export default function OrganizerRegisterPage() {
             console.log("Organizer Register Success Data:", registerData);
             resetForm();
             showAlert({ icon: "success", title: "Success!", text: "Organizer registered successfully" });
-
+            navigate("/home");
+            window.location.reload();
         } catch (error: any) {
 
             const errorMessage =
@@ -126,6 +127,16 @@ export default function OrganizerRegisterPage() {
           alt=""
           className="fixed inset-0 w-full h-full object-cover"
         />
+
+        {/* <Button className="absolute top-40 left-4 z-10">
+          <Link
+            to="/home"
+            className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          >
+            Back to Home
+          </Link>
+        </Button> */}
+
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative z-1 flex flex-col mt-[100px] items-center h-[900px] overflow-auto px-4 py-8">
           <form className="bg-white/20 mt-[50px] backdrop-blur-md p-8 rounded-xl lg:w-[800px] border border-white/40 shadow-xl max-h-[80vh] overflow-auto">

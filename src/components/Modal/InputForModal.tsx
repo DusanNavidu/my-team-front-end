@@ -12,6 +12,7 @@ interface InputProps {
     className?: string;
     accept?: string;
     min?: string;
+    maxLength?: number;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
     // NEW → file input handler

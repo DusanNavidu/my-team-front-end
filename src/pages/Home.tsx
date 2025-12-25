@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
+import EventBox from "../components/post/Post";
 
 export default function Home() {
 
@@ -40,7 +41,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-[80vh] min-h-[500px] overflow-hidden">
+      <div className="relative w-full h-[80vh] min-h-[700px] overflow-hidden">
         {images.map((img, index) => (
           <img
             key={index}
@@ -94,35 +95,33 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="py-12 px-4 max-w-7xl mx-auto w-full">
-        <div className="mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-4">
-            ⚽️ Latest Matches
-          </h1>
-          <p className="text-center text-gray-600">
-            Check out the results and stats from our recent games.
-          </p>
-          <div className="mt-6 p-6 bg-blue-50 rounded-lg shadow">
-            <p>Team A vs Team B: **3 - 1** (Win)</p>
-          </div>
-        </div>
+      <div className="container mx-auto mt-12">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-800 text-center mb-4">
-            👤 Player Spotlight
-          </h1>
-          <p className="text-center text-gray-600">
-            Meet the top performers of the week.
-          </p>
-          <div className="mt-6 p-6 bg-green-50 rounded-lg shadow">
-            <img
-              src="/placeholder-player.jpg"
-              alt="Player Spotlight"
-              className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-            />
-            <p className="text-lg font-semibold text-green-700">
-              John Doe - MVP
-            </p>
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+            Events
+          </h2>
+          <div className="flex justify-end">
+            <p className="text-blue-500 font-semibold cursor-pointer hover:underline hover:text-blue-600">Show all</p>
           </div>
+          <EventBox />
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+            News
+          </h2>
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+            Players
+          </h2>
+        </div>
+
+          <div className="mt-12">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+            Committees
+          </h2>
         </div>
       </div>
     </div>
