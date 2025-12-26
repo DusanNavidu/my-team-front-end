@@ -78,7 +78,7 @@ const ProfilePost: React.FC<EventCardProps> = ({ event }) => {
           <img
             src={event.eventImageURL || "event_placeholder.jpg"}
             alt={event.eventName}
-            className="w-full max-h-150 object-cover"
+            className="w-full max-h-220 object-cover"
           />
           <span
             className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-0.5 rounded ${getStatusBadge(

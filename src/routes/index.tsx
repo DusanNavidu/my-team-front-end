@@ -4,6 +4,7 @@ import { useAuth } from "../context/authContext";
 import Layout from "../components/layout/LayoutBasic";
 import AdminLayout from "../components/layout/LoyoutAdmin";
 import LiveScores from "../pages/LiveScores";
+import Contact from "../pages/Contact";
 
 const Index = lazy(() => import("../pages"));
 const Login = lazy(() => import("../pages/Login"));
@@ -11,12 +12,18 @@ const Register = lazy(() => import("../pages/Register"));
 const Home = lazy(() => import("../pages/Home"));
 const Post = lazy(() => import("../pages/Post"));
 const Event = lazy(() => import("../pages/Event"));
-const Profile = lazy(() => import("../pages/Profile"));
-const VisitProfile = lazy(() => import("../pages/VisitProfile"));
-const OrganizerRegisterPage = lazy(() => import("../pages/Organizer_register_page"));
-const AdminDashBoard = lazy(() => import("../pages/admin_pages/Admin_Dashbord"));
-const AdminUsersManage = lazy(() => import("../pages/admin_pages/Admin_Users_Manage"));
-
+const OrganizerProfile = lazy(() => import("../pages/profile/OrganizerProfile"));
+const PlayerProfile = lazy(() => import("../pages/profile/PlayerProfile"));
+const VisitProfile = lazy(() => import("../pages/profile/VisitProfile"));
+const OrganizerRegisterPage = lazy(
+  () => import("../pages/Organizer_register_page")
+);
+const AdminDashBoard = lazy(
+  () => import("../pages/admin_pages/Admin_Dashbord")
+);
+const AdminUsersManage = lazy(
+  () => import("../pages/admin_pages/Admin_Users_Manage")
+);
 
 type RequireAuthTypes = { children: ReactNode; roles?: string[] };
 
@@ -71,7 +78,10 @@ export default function Router() {
             }
           >
             <Route path="/admin/dashboard" element={<AdminDashBoard />} />
-            <Route path="/admin/admin-users-manage" element={<AdminUsersManage />} />
+            <Route
+              path="/admin/admin-users-manage"
+              element={<AdminUsersManage />}
+            />
           </Route>
 
           <Route
@@ -89,7 +99,9 @@ export default function Router() {
             />
             <Route path="/event" element={<Event />} />
             <Route path="/live-scores" element={<LiveScores />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile-organizer" element={<OrganizerProfile />} />
+            <Route path="/profile-player" element={<PlayerProfile />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
         </Routes>
       </Suspense>

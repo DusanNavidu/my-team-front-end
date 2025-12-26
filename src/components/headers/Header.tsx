@@ -176,9 +176,17 @@ export default function Header() {
                 Team
               </Link>
             )}
-            {!hideTopButtons && (
+            {!hideTopButtons && isOrganizer &&(
               <Link
-                to="/profile"
+                to="/profile-organizer"
+                className="hover:underline hover:underline-offset-4 hover:decoration-2 transition-all duration-500 text-amber-50"
+              >
+                Profile
+              </Link>
+            )}
+            {!hideTopButtons && isPlayer &&(
+              <Link
+                to="/profile-player"
                 className="hover:underline hover:underline-offset-4 hover:decoration-2 transition-all duration-500 text-amber-50"
               >
                 Profile
@@ -261,9 +269,18 @@ export default function Header() {
                 Team
               </Link>
             )}
-            {!hideTopButtons && (
+            {!hideTopButtons && isOrganizer &&(
               <Link
-                to="/profile"
+                to="/profile-organizer"
+                className="text-amber-50 hover:text-blue-400"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Profile
+              </Link>
+            )}
+            {!hideTopButtons && isPlayer &&(
+              <Link
+                to="/profile-player"
                 className="text-amber-50 hover:text-blue-400"
                 onClick={() => setIsMenuOpen(false)}
               >
