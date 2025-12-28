@@ -111,7 +111,6 @@ export const updateOrganizerDetails = async (
 export const getOrganizerDetailsForVisitUsers = async (organizerId: string) => {
   try {
     const res = await api.get(`/organizer/profile/view/${organizerId}`);
-    // Backend එකෙන් එවන්නේ { message: "...", data: organizer } නිසා res.data.data ගත යුතුය
     return res.data.data; 
   } catch (error) {
     console.error("Error fetching organizer details for visit:", error);

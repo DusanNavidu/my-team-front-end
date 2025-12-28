@@ -75,7 +75,7 @@ export default function Header() {
     userIsLoggedIn && !hideTopButtons && !isPlayer && !isOrganizer && isUser;
 
   return (
-    <header className="w-full h-[150px] bg-gray-900 fixed top-0 left-0 z-4 p-4 shadow-md flex">
+    <header className="w-full h-[150px] bg-gray-900 fixed top-0 left-0 z-50 p-4 shadow-md flex">
       <div className="flex flex-col space-y-2 container mx-auto">
         <div className="flex space-x-4 justify-between items-center h-auto">
           <h1 className="text-3xl lg:text-5xl font-extrabold w-[150px] lg:w-[250px] animate-float bg-gradient-to-r from-blue-600 via-white to-blue-600 bg-clip-text text-transparent drop-shadow-lg text-shadow-lg">

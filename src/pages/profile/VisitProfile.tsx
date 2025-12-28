@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import VisitProfilePost from "../../components/post/VisitProfilePost";
+import VisitProfilePost from "../../components/post/VisitProfilePostOrganizer";
 import type { EventData } from "../../service/event";
 import { fetchEventsByOrganizerId } from "../../service/event";
 import { CalendarDays, Phone, Mail, ShieldCheck, MapPin, Info } from "lucide-react";

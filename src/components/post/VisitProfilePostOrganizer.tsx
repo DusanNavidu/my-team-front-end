@@ -17,7 +17,7 @@ interface EventCardProps {
   event: EventData;
 }
 
-const VisitProfilePost: React.FC<EventCardProps> = ({ event }) => {
+const VisitProfilePostOrganizer: React.FC<EventCardProps> = ({ event }) => {
 
   const [showFull, setShowFull] = useState(false);
 
@@ -167,4 +167,4 @@ const VisitProfilePost: React.FC<EventCardProps> = ({ event }) => {
   );
 };
 
-export default VisitProfilePost;
+export default VisitProfilePostOrganizer;
