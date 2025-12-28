@@ -58,6 +58,8 @@ export interface EventData {
     eventLocation: string;
     eventImageURL: string;
     EventStatus: string;
+    likes: string[];
+    comments: string[];
     createdAt: Date;
 }
 

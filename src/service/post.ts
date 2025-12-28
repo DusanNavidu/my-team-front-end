@@ -16,6 +16,7 @@ export interface PostData {
     feeling: string;
     description: string;
     tagInput: string[];
+    userRole: string;
     status: string;
     likes: string[];
     comments: string[];
@@ -24,6 +25,5 @@ export interface PostData {
 
 export const getMyPosts = async (): Promise<PostData[]> => {
     const response = await api.get("/post/getmeposts");
-    // Backend එකෙන් එවන්නේ { data: posts } නිසා:
     return response.data.data; 
 };

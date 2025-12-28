@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { type PostData } from '../../service/post';
 import { Heart, MessageCircle, Share2, MoreHorizontal, MoreVertical } from 'lucide-react';
 import { getPlayerProfile } from '../../service/playerDetails';
+import { getOrganizerDetails } from "../../service/organizer";
 
 export default function PlayerProfilePost({ post }: { post: PostData }) {
 
-    const [profile, setProfile] = useState<any>(null);
-
+    const [playerProfile, setPlayerProfile] = useState<any>(null);
+    const [organizerLogo, setOrganizerLogo] = useState<string | null>(null);
+    
     useEffect(() => {
         const loadData = async () => {
             try {
                 const res = await getPlayerProfile();
                 if (res.data) {
-                    setProfile(res.data);
+                    setPlayerProfile(res.data);
                 }
             } catch (err) {
                 console.log("Error loading profile", err);
@@ -21,13 +23,29 @@ export default function PlayerProfilePost({ post }: { post: PostData }) {
         loadData();
     }, []);
 
+    useEffect(() => {
+        const loadOrganizerData = async () => {
+            try {
+                const res = await getOrganizerDetails();
+                // Backend එකෙන් එන දත්ත වල හැඩය අනුව res.data.committeeLogoImageURL හෝ res.data.data.committeeLogoImageURL විය හැක
+                const logo = res.data?.committeeLogoImageURL || res.data?.data?.committeeLogoImageURL;
+                if (logo) {
+                    setOrganizerLogo(logo);
+                }
+            } catch (err) {
+                console.log("Error loading organizer profile", err);
+            }
+        };
+        loadOrganizerData();
+    }, []);
+
     return (
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden mb-8">
             <div className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className='className="w-12 h-12 rounded-full'>
                         <img
-                            src={profile?.playerLogoImageFileURL || "https://cdn-icons-png.flaticon.com/512/147/147144.png"}
+                            src={playerProfile?.playerLogoImageFileURL || organizerLogo || "https://cdn-icons-png.flaticon.com/512/147/147144.png"}
                             alt="User Avatar"
                             className="w-12 h-12 rounded-full object-cover"
                         />
@@ -73,7 +91,7 @@ export default function PlayerProfilePost({ post }: { post: PostData }) {
             </div>
 
             <div className="px-6 pb-4">
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">{post.description}</p>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4 max-h-10 overflow-hidden">{post.description}</p>
                 <div className="flex flex-wrap gap-2">
                     {post.tagInput.map(tag => (
                         <span key={tag} className="text-blue-500 text-xs font-bold italic">{tag}</span>

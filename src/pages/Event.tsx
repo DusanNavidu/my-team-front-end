@@ -24,7 +24,6 @@ const getCurrentTime = () => {
 
 export default function Event() {
   const [openModal, setOpenModal] = useState(false);
-
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -33,30 +32,25 @@ export default function Event() {
   const [eventCity, setEventCity] = useState("");
   const [eventLocation, setEventLocation] = useState("");
   const [eventImageFile, setEventImageURL] = useState<File | null>(null);
-  const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState<
-    string | null
-  >(null);
+  const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const todayDate = getTodayDate();
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFile: React.Dispatch<React.SetStateAction<File | null>>,
-    setPreviewUrl: React.Dispatch<React.SetStateAction<string | null>>
-  ) => {
-    const file = e.target.files?.[0];
+  const getTodayDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
-    if (file) {
-      setFile(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } else {
-      setFile(null);
-      setPreviewUrl(null);
-      console.log("File deselected.");
-    }
-  };
+const getCurrentTime = () => {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
 
   const handleOpenModal = () => {
     handleEventModalResert();
