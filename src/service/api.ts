@@ -4,9 +4,10 @@ import axios, { AxiosError } from "axios"
 import { refreshTokens } from "./auth"
 
 const api = axios.create({
-  // Backend එකේ Vercel URL එක මෙතනට දාන්න
-  baseURL: "https://my-team-back-end.vercel.app/api/v1" 
-})
+  baseURL: "https://my-team-back-end.vercel.app/api/v1",
+  withCredentials: true
+});
+
 
 const PUBLIC_ENDPOINTS = ["/auth/login", "/auth/register"]
 
