@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import type { EventData } from "../../service/event";
-import Button from "../Button";
+import type { EventData } from "../../../service/event";
+import Button from "../../Button";
 import {
   Heart,
   MessageCircle,
@@ -12,14 +12,13 @@ import {
   MoreVertical,
 } from "lucide-react";
 import moment from "moment";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "../../../context/authContext";
 
 interface EventCardProps {
   event: EventData;
 }
 
 const VisitProfilePostOrganizer: React.FC<EventCardProps> = ({ event }) => {
-
   const [showFull, setShowFull] = useState(false);
   const organizer = event.userId?.organizerProfile;
 
@@ -27,7 +26,8 @@ const VisitProfilePostOrganizer: React.FC<EventCardProps> = ({ event }) => {
     return moment(dateString).format("MMMM Do, YYYY");
   };
   const { user } = useAuth();
-  const isOrganizer = user?.roles?.includes("ORGANIZER") || (user?.roles?.includes("USER"));
+  const isOrganizer =
+    user?.roles?.includes("ORGANIZER") || user?.roles?.includes("USER");
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -92,7 +92,8 @@ const VisitProfilePostOrganizer: React.FC<EventCardProps> = ({ event }) => {
               </span>
 
               <span>
-                {" "}tournament is organized by{" "}
+                {" "}
+                tournament is organized by{" "}
                 <span className="text-blue-500">
                   {organizer?.committeeName || "Official Organizer"}
                 </span>

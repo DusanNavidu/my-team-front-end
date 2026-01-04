@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Rocket, UserPlus } from "lucide-react";
 
 export default function Index() {
-
   const images = [
     "src/assets/image/soccer-game-concept.jpg",
     "src/assets/image/cricket-match-with-player.jpg",
@@ -11,60 +11,60 @@ export default function Index() {
 
   const [current, setCurrent] = useState(0);
 
-  // Auto slide every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
-    <div className="w-[600px] h-[350px] overflow-hidden rounded-xl shadow-lg">
+    <div className="relative w-full h-screen overflow-hidden bg-black">
+      {/* Background Slider with Ken Burns Effect */}
       {images.map((img, index) => (
-        <img
+        <div
           key={index}
-          src={img}
-          alt=""
-          className={`w-full h-full object-cover absolute transition-opacity duration-1000 ${
-            current === index ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            current === index ? "opacity-60 scale-110" : "opacity-0 scale-100"
           }`}
-        />
-      ))}
-      <div className="absolute top-2/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white p-4 justify-center flex flex-col">
-        
-        <h1
-          className="
-            text-center text-7xl font-extrabold 
-            animate-float 
-            bg-gradient-to-r from-blue-600 via-white to-blue-600 
-            bg-clip-text text-transparent
-            drop-shadow-lg text-shadow-lg
-          "
+          style={{ transition: 'opacity 1.5s ease-in-out, transform 10s linear' }}
         >
-          MY TEAM
-        </h1>
-
-        <div className="flex justify-center mt-4">
-          <Link to="/login">
-            <button className="m-4 rounded-2xl w-60 h-20 text-2xl px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 border-2">
-              Get Started
-            </button>
-          </Link>
-          <Link to="/register" className="ml-4">
-            <button className="m-4 rounded-2xl w-60 h-20 text-2xl px-4 py-2 bg-green-500 text-white hover:bg-green-600 border-2">
-              Register
-            </button>
-          </Link>
+          <img src={img} alt="" className="w-full h-full object-cover" />
         </div>
-        <p className="text-center lg:text-lg">
-          "My Team" is the definitive digital hub for the sports enthusiast. Get
-          real-time live scores and schedules for all major global events.
-          Access in-depth player profiles, including career stats and status
-          updates. With instant, personalized notifications and a curated feed
-          of breaking news and analysis, "My Team" ensures you are always
-          connected to the world of sports.
-        </p>
+      ))}
+
+      {/* Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+
+      {/* Content Area */}
+      <div className="relative z-20 container mx-auto h-full flex flex-col items-center justify-center px-4">
+        <div className="max-w-4xl text-center space-y-8 animate-in fade-in zoom-in duration-1000">
+          <h1 className="text-6xl md:text-9xl font-black italic tracking-tighter text-white uppercase drop-shadow-2xl">
+            MY <span className="text-blue-500">TEAM</span>
+          </h1>
+          
+          <p className="text-gray-200 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed backdrop-blur-sm bg-black/20 p-6 rounded-2xl border border-white/10">
+            "My Team" is the definitive digital hub for the sports enthusiast. Get real-time live scores, access in-depth player profiles, career stats, and breaking news in one streamlined arena.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-6">
+            <Link to="/login">
+              <button className="group relative flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-black px-12 py-5 rounded-sm skew-x-[-12deg] transition-all shadow-xl active:scale-95">
+                <div className="skew-x-[12deg] flex items-center gap-3 uppercase tracking-widest text-lg">
+                  <Rocket size={24} /> Get Started
+                </div>
+              </button>
+            </Link>
+            
+            <Link to="/register">
+              <button className="group relative flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-black px-12 py-5 rounded-sm skew-x-[-12deg] border border-white/20 transition-all active:scale-95">
+                <div className="skew-x-[12deg] flex items-center gap-3 uppercase tracking-widest text-lg">
+                  <UserPlus size={24} /> Register
+                </div>
+              </button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

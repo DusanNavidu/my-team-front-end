@@ -39,7 +39,7 @@ export default function Header() {
 
       setIsModalOpen(false);
       setHasAgreed(false);
-      navigate("/profile");
+      navigate("/profile-player");
 
       showAlert({
         icon: "success",
@@ -168,7 +168,7 @@ export default function Header() {
                 News
               </Link>
             )}
-            {!hideTopButtons && (
+            {!hideTopButtons && !isOrganizer && (
               <Link
                 to="/team"
                 className="hover:underline hover:underline-offset-4 hover:decoration-2 transition-all duration-500 text-amber-50"

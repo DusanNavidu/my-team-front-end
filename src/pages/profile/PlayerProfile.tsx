@@ -4,6 +4,7 @@ import {
   getPlayerProfile,
   updatePlayerDetails,
 } from "../../service/playerDetails";
+import { getAllUserFullnames } from "../../service/auth";
 import { createPostService } from "../../service/post";
 import Button from "../../components/Button";
 import Modal from "../../components/Modal/Modal";
@@ -12,6 +13,7 @@ import Select from "../../components/Modal/SelectForModal";
 import { X, Plus, Phone, Info, Mail, ShieldCheck, Camera } from "lucide-react";
 import { getMyPosts, type PostData } from "../../service/post";
 import PlayerPost from "../../components/post/ProfilePost";
+import Story from "../../components/post/Story";
 
 export default function PlayerProfile() {
   const { user } = useAuth();
@@ -43,6 +45,13 @@ export default function PlayerProfile() {
   const [postFile, setPostFile] = useState<File | null>(null);
   const [postPreview, setPostPreview] = useState<string | null>(null);
 
+  const [postTypeChoice, setPostTypeChoice] = useState("post"); // post, story, both
+  const [storyKey, setStoryKey] = useState(0);
+  const [allUsers, setAllUsers] = useState<{fullname: string, _id: string}[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<{fullname: string, _id: string}[]>([]);
+  const [mentionSearch, setMentionSearch] = useState("");
+  const [showMentionResults, setShowMentionResults] = useState(false);
+  
   const feelingOptions = [
     { value: "", label: "Select Feeling" },
     { value: "match-ready", label: "⚽ Match Ready" },
@@ -115,6 +124,29 @@ export default function PlayerProfile() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const res = await getAllUserFullnames();
+            console.log("Fetched Users:", res.data); // මෙතැනට දත්ත එනවාදැයි පරීක්ෂා කරන්න
+            setAllUsers(res.data || []);
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        }
+    };
+    fetchUsers();
+  }, []);
+
+  const toggleMention = (userObj: {fullname: string, _id: string}) => {
+    if (selectedMentions.find(m => m._id === userObj._id)) {
+        setSelectedMentions(selectedMentions.filter(m => m._id !== userObj._id));
+    } else {
+        setSelectedMentions([...selectedMentions, userObj]);
+    }
+    setMentionSearch("");
+    setShowMentionResults(false);
+  };
+
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "logo" | "banner" | "post"
@@ -144,10 +176,8 @@ export default function PlayerProfile() {
     fd.append("title", title);
     fd.append("description", description);
     fd.append("feeling", feeling);
-    fd.append(
-      "mention",
-      JSON.stringify(mention.split(" ").map((m) => m.trim()))
-    );
+    fd.append("postingType", postTypeChoice);
+    fd.append("mention", JSON.stringify(selectedMentions.map(m => m.fullname)));
     fd.append(
       "tagInput",
       JSON.stringify(tagInputText.split(" ").map((t) => t.trim()))
@@ -166,6 +196,12 @@ export default function PlayerProfile() {
       setTagInputText("");
       setPostPreview(null);
       setPostFile(null);
+      await fetchPosts();
+
+      if (postTypeChoice === "story" || postTypeChoice === "both") {
+        setStoryKey((prev) => prev + 1);
+      }
+
       fetchPosts();
     } catch (err) {
       alert("Failed to create post");
@@ -340,6 +376,10 @@ export default function PlayerProfile() {
         </Button>
       </div>
 
+      <div className="max-w-[700px] mx-auto mb-10">
+        <Story key={storyKey} onOpenModal={() => setOpenPostModal(true)} />
+      </div>
+
       <div className="max-w-[700px] mx-auto px-4 mt-10">
         <h3 className="text-xl font-black uppercase mb-6 flex items-center gap-2">
           <Camera size={20} className="text-blue-600" /> My Timeline
@@ -443,12 +483,51 @@ export default function PlayerProfile() {
               options={feelingOptions}
             />
 
-            <Input
-              label="Mentions (comma separated)"
-              value={mention}
-              onChange={(e) => setMention(e.target.value)}
-              placeholder="@mention"
-            />
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Mention Friends</label>
+            
+            {/* Selected Mentions Pills */}
+            <div className="flex flex-wrap gap-2 mb-2">
+                {selectedMentions.map(m => (
+                    <span key={m._id} className="bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-2 shadow-sm">
+                        @{m.fullname}
+                        <X size={12} className="cursor-pointer" onClick={() => toggleMention(m)} />
+                    </span>
+                ))}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative">
+                <input
+                    type="text"
+                    className="w-full p-4 rounded-2xl border border-gray-100 focus:outline-blue-500 font-bold text-sm"
+                    placeholder="Search friends to mention..."
+                    value={mentionSearch}
+                    onChange={(e) => {
+                        setMentionSearch(e.target.value);
+                        setShowMentionResults(true);
+                    }}
+                    onFocus={() => setShowMentionResults(true)}
+                />
+
+                {/* Dropdown Results */}
+                {showMentionResults && mentionSearch && (
+                    <div className="absolute z-[150] w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar">
+                        {allUsers
+                            .filter(u => u.fullname.toLowerCase().includes(mentionSearch.toLowerCase()))
+                            .map(u => (
+                                <div 
+                                    key={u._id}
+                                    onClick={() => toggleMention(u)}
+                                    className="p-4 hover:bg-blue-50 cursor-pointer flex items-center justify-between transition-colors"
+                                >
+                                    <span className="font-black text-xs uppercase tracking-widest text-gray-700">{u.fullname}</span>
+                                    <Plus size={14} className="text-blue-600" />
+                                </div>
+                            ))
+                        }
+                    </div>
+                )}
+            </div>
 
             <label
               htmlFor="description"
@@ -470,6 +549,33 @@ export default function PlayerProfile() {
               onChange={(e) => setTagInputText(e.target.value)}
               placeholder="#tags..."
             />
+
+            <div className="bg-blue-50/50 p-4 rounded-3xl border border-blue-100 my-4">
+              <label className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-3 block ml-1">
+                Where to post?
+              </label>
+
+              <div className="grid grid-cols-3 gap-3">
+                {["post", "story", "both"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setPostTypeChoice(type)}
+                    className={`py-3 px-2 rounded-2xl text-[10px] font-black uppercase transition-all border-2 
+                          ${
+                            postTypeChoice === type
+                              ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200 scale-105"
+                              : "bg-white border-gray-100 text-gray-400 hover:border-blue-200"
+                          }`}
+                  >
+                    {type === "both" ? "Feed & Story" : type}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[9px] text-gray-400 mt-3 ml-1 italic italic">
+                * Stories will disappear after 24 hours.
+              </p>
+            </div>
 
             <Button
               disabled={isLoading}

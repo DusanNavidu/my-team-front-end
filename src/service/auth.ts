@@ -149,3 +149,18 @@ export const changeUserRoleToPlayer = async (userId: string) => {
   const res = await api.put(`/auth/roleUpdate/player/${userId}`);
   return res.data;
 };
+
+export const getPlayerProfiles = async () => {
+  const res = await api.get("/auth/player/playersprofiles");
+  return res.data;
+}
+
+export const getPlayerProfileById = async (id: string) => {
+    const response = await api.get(`/auth/player/profile/${id}`);
+    return response.data;
+};
+
+export const getAllUserFullnames = async () => {
+    const res = await api.get("/auth/user/fullnames");
+    return res.data;
+};

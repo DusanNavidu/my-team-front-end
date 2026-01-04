@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import type { EventData } from "../../service/event";
-import Button from "../Button";
+import type { EventData } from "../../../service/event";
+import Button from "../../Button";
 import {
   Heart,
   MessageCircle,
@@ -11,14 +11,13 @@ import {
   Clock,
 } from "lucide-react";
 import moment from "moment";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "../../../context/authContext";
 
 interface EventCardProps {
   event: EventData;
 }
 
 const ProfilePost: React.FC<EventCardProps> = ({ event }) => {
-
   const [showFull, setShowFull] = useState(false);
   const formatDate = (dateString: string) => {
     return moment(dateString).format("MMMM Do, YYYY");

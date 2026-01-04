@@ -4,7 +4,8 @@ import {
   getOrganizerDetails,
   updateOrganizerDetails,
 } from "../../service/organizer";
-import ProfilePost from "../../components/post/ProfilePostOrganizer";
+import { getAllUserFullnames } from "../../service/auth";
+import ProfileEvent from "../../components/post/organizer/ProfilePostOrganizer";
 import { createEvent, fetchOrganizerEvents } from "../../service/event";
 import type { EventData } from "../../service/event";
 import Button from "../../components/Button";
@@ -22,11 +23,17 @@ import {
   Plus,
   Calendar,
   Newspaper,
+  ExternalLink,
+  Check,
+  LayoutGrid
 } from "lucide-react";
 import { createPostService } from "../../service/post";
 import { getMyPosts, type PostData } from "../../service/post";
 import PlayerPost from "../../components/post/ProfilePost";
 import { showAlert } from "../../components/Swail";
+import Story from "../../components/post/Story";
+import { getMyApplications, updateAppStatus } from "../../service/application"
+import ApplicationCard from "../../components/ApplicationCard";
 
 interface OrganizerProfile {
   committeeName: string;
@@ -55,8 +62,11 @@ const getCurrentTime = () => {
 export default function Profile() {
   // General States
   const { user, loading: authLoading } = useAuth();
-  const [organizerDetails, setOrganizerDetails] = useState<OrganizerProfile | null>(null);
+  const [storyKey, setStoryKey] = useState(0);
+  const [organizerDetails, setOrganizerDetails] =
+    useState<OrganizerProfile | null>(null);
   const [organizerEvents, setOrganizerEvents] = useState<EventData[]>([]);
+  const [applications, setApplications] = useState<any[]>([]);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +75,7 @@ export default function Profile() {
   const isOrganizer = user?.roles?.includes("ORGANIZER") || false;
 
   // "events" | "posts" | "news" ලෙස Tabs 3ක් සඳහා
-  const [activeTab, setActiveTab] = useState<"events" | "posts" | "news">(
+  const [activeTab, setActiveTab] = useState<"events" | "posts" | "news" | "apply">(
     "events"
   );
 
@@ -106,8 +116,33 @@ export default function Profile() {
   const [eventCity, setEventCity] = useState("");
   const [eventLocation, setEventLocation] = useState("");
   const [eventImageFile, setEventImageURL] = useState<File | null>(null);
-  const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState<string | null>(null);
+  const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState<
+    string | null
+  >(null);
   const todayDate = getTodayDate();
+  const [postTypeChoice, setPostTypeChoice] = useState("post"); // post, story, both
+
+  const [isApplicationLoading, setApplicationsLoading] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  const [allUsers, setAllUsers] = useState<{fullname: string, _id: string}[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<{fullname: string, _id: string}[]>([]);
+  const [mentionSearch, setMentionSearch] = useState("");
+  const [showMentionResults, setShowMentionResults] = useState(false);
+
+  const handleShowMore = () => {
+      setVisibleCount(prev => prev + 10);
+  };
+
+  const toggleMention = (userObj: {fullname: string, _id: string}) => {
+    if (selectedMentions.find(m => m._id === userObj._id)) {
+        setSelectedMentions(selectedMentions.filter(m => m._id !== userObj._id));
+    } else {
+        setSelectedMentions([...selectedMentions, userObj]);
+    }
+    setMentionSearch("");
+    setShowMentionResults(false);
+  };
 
   const resetForm = useCallback(() => {
     if (organizerDetails) {
@@ -213,6 +248,32 @@ export default function Profile() {
   };
 
   useEffect(() => {
+      const fetchUsers = async () => {
+          try {
+              const res = await getAllUserFullnames();
+              console.log("Fetched Users:", res.data); // මෙතැනට දත්ත එනවාදැයි පරීක්ෂා කරන්න
+              setAllUsers(res.data || []);
+          } catch (err) {
+              console.error("Error fetching users:", err);
+          }
+      };
+      fetchUsers();
+    }, []);
+
+  const fetchApps = useCallback(async () => {
+    setApplicationsLoading(true);
+    try {
+        const res = await getMyApplications();
+        setApplications(res.data || []);
+        console.log("Applications fetched:", res.data);
+    } catch (err) { 
+        console.error("Failed to fetch applications:", err); 
+    } finally { 
+        setApplicationsLoading(false); 
+    }
+  }, []);
+
+  useEffect(() => {
     if (!authLoading && user && isOrganizer) {
       const loadAllDashboardData = async () => {
         setLoadingDetails(true);
@@ -223,7 +284,7 @@ export default function Profile() {
           const details: OrganizerProfile = res.data.data || res.data;
           setOrganizerDetails(details);
 
-          await Promise.all([loadEventsData(), fetchPosts()]);
+          await Promise.all([loadEventsData(), fetchPosts(), fetchApps()]);
         } catch (err: any) {
           console.error("Failed to fetch organizer data:", err);
           setError(
@@ -248,6 +309,14 @@ export default function Profile() {
     );
   }
 
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+        await updateAppStatus(id, newStatus);
+        setApplications(prev => prev.map(app => app._id === id ? { ...app, status: newStatus } : app));
+        showAlert({ icon: "success", title: "Updated", text: `Application ${newStatus}!` });
+    } catch (err) { alert("Failed to update status"); }
+  };
+
   if (!isOrganizer || error) {
     return (
       <div className="mt-[150px] container mx-auto p-8 bg-white shadow-lg rounded-xl">
@@ -264,116 +333,6 @@ export default function Profile() {
       </div>
     );
   }
-
-  const feelingOptions = [
-    { value: "", label: "Select Feeling" },
-    { value: "match-ready", label: "⚽ Match Ready" },
-    { value: "winning", label: "🏅 Winning Mood" },
-    { value: "losing", label: "😞 Losing Streak" },
-    { value: "training-mode", label: "🏋️ Training Mode" },
-    { value: "injured", label: "🤕 Injured" },
-    { value: "celebrating", label: "🎉 Celebrating" },
-    { value: "birthday", label: "🎂 Birthday Vibes" },
-    { value: "party-vibe", label: "🎉 Party Vibe" },
-    { value: "teamwork", label: "🤝 Teamwork" },
-    { value: "team-player", label: "🤜🤛 Team Player" },
-    { value: "team-spirit", label: "🤝 Team Spirit" },
-    { value: "training", label: "🏋️ Training Hard" },
-    { value: "focused-game", label: "🎮 Game Focused" },
-    { value: "happy", label: "😊 Happy" },
-    { value: "excited", label: "🤩 Excited" },
-    { value: "motivated", label: "💪 Motivated" },
-    { value: "grateful", label: "🙏 Grateful" },
-    { value: "proud", label: "🏆 Proud" },
-    { value: "determined", label: "🔥 Determined" },
-    { value: "optimistic", label: "🌈 Optimistic" },
-    { value: "confident", label: "😎 Confident" },
-    { value: "inspired", label: "✨ Inspired" },
-    { value: "focused", label: "🎯 Focused" },
-    { value: "energized", label: "⚡ Energized" },
-    { value: "blessed", label: "😇 Blessed" },
-    { value: "thankful", label: "🙌 Thankful" },
-    { value: "relaxed", label: "😌 Relaxed" },
-    { value: "hopeful", label: "🤞 Hopeful" },
-    { value: "victorious", label: "🥇 Victorious" },
-    { value: "strong", label: "🦾 Strong" },
-    { value: "calm", label: "🧘 Calm" },
-  ];
-
-  const districts = [
-    { label: "Cover any Place in Sri Lanka", value: "cover_all" },
-    { label: "Ampara", value: "Ampara" },
-    { label: "Anuradhapura", value: "Anuradhapura" },
-    { label: "Badulla", value: "Badulla" },
-    { label: "Batticaloa", value: "Batticaloa" },
-    { label: "Colombo", value: "Colombo" },
-    { label: "Galle", value: "Galle" },
-    { label: "Gampaha", value: "Gampaha" },
-    { label: "Hambantota", value: "Hambantota" },
-    { label: "Jaffna", value: "Jaffna" },
-    { label: "Kalutara", value: "Kalutara" },
-    { label: "Kandy", value: "Kandy" },
-    { label: "Kegalle", value: "Kegalle" },
-    { label: "Kilinochchi", value: "Kilinochchi" },
-    { label: "Kurunegala", value: "Kurunegala" },
-    { label: "Mannar", value: "Mannar" },
-    { label: "Matale", value: "Matale" },
-    { label: "Matara", value: "Matara" },
-    { label: "Monaragala", value: "Monaragala" },
-    { label: "Mullaitivu", value: "Mullaitivu" },
-    { label: "Nuwara Eliya", value: "Nuwara Eliya" },
-    { label: "Polonnaruwa", value: "Polonnaruwa" },
-    { label: "Puttalam", value: "Puttalam" },
-    { label: "Ratnapura", value: "Ratnapura" },
-    { label: "Trincomalee", value: "Trincomalee" },
-    { label: "Vavuniya", value: "Vavuniya" },
-  ];
-
-  const categoryOptions = [
-    { label: "Cricket", value: "cricket" },
-    { label: "football", value: "football" },
-    { label: "Rugby", value: "rugby" },
-    { label: "Volleyball", value: "volleyball" },
-    { label: "Badminton", value: "badminton" },
-    { label: "Tennis", value: "tennis" },
-    { label: "Hockey", value: "hockey" },
-    { label: "Table Tennis", value: "table_tennis" },
-    { label: "Online Gaming", value: "online_gaming" },
-    { label: "Swimming", value: "swimming" },
-    { label: "Athletics", value: "athletics" },
-    { label: "Cycling", value: "cycling" },
-    { label: "Martial Arts", value: "martial_arts" },
-    { label: "Other", value: "other" },
-  ];
-
-  const cityOptions = [
-    { label: "Any City", value: "Any City" },
-    { label: "Ampara", value: "Ampara" },
-    { label: "Anuradhapura", value: "Anuradhapura" },
-    { label: "Badulla", value: "Badulla" },
-    { label: "Batticaloa", value: "Batticaloa" },
-    { label: "Colombo", value: "Colombo" },
-    { label: "Galle", value: "Galle" },
-    { label: "Gampaha", value: "Gampaha" },
-    { label: "Hambantota", value: "Hambantota" },
-    { label: "Jaffna", value: "Jaffna" },
-    { label: "Kalutara", value: "Kalutara" },
-    { label: "Kandy", value: "Kandy" },
-    { label: "Kegalle", value: "Kegalle" },
-    { label: "Kilinochchi", value: "Kilinochchi" },
-    { label: "Kurunegala", value: "Kurunegala" },
-    { label: "Mannar", value: "Mannar" },
-    { label: "Matale", value: "Matale" },
-    { label: "Matara", value: "Matara" },
-    { label: "Monaragala", value: "Monaragala" },
-    { label: "Mullaitivu", value: "Mullaitivu" },
-    { label: "Nuwara Eliya", value: "Nuwara Eliya" },
-    { label: "Polonnaruwa", value: "Polonnaruwa" },
-    { label: "Puttalam", value: "Puttalam" },
-    { label: "Ratnapura", value: "Ratnapura" },
-    { label: "Trincomalee", value: "Trincomalee" },
-    { label: "Vavuniya", value: "Vavuniya" },
-  ];
 
   const DEFAULT_BANNER =
     "https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=2069&auto=format&fit=crop";
@@ -408,6 +367,7 @@ export default function Profile() {
     fd.append("title", title);
     fd.append("description", description);
     fd.append("feeling", feeling);
+    fd.append("postingType", postTypeChoice);
     fd.append(
       "mention",
       JSON.stringify(mention.split(" ").map((m) => m.trim()))
@@ -427,6 +387,12 @@ export default function Profile() {
       setTagInputText("");
       setPostPreview(null);
       setPostFile(null);
+      await fetchPosts();
+
+      if (postTypeChoice === "story" || postTypeChoice === "both") {
+        setStoryKey((prev) => prev + 1);
+      }
+
       fetchPosts();
     } catch (err) {
       alert("Failed to create post");
@@ -541,6 +507,117 @@ export default function Profile() {
       setIsLoading(false);
     }
   };
+
+
+  const feelingOptions = [
+    { value: "", label: "Select Feeling" },
+    { value: "match-ready", label: "⚽ Match Ready" },
+    { value: "winning", label: "🏅 Winning Mood" },
+    { value: "losing", label: "😞 Losing Streak" },
+    { value: "training-mode", label: "🏋️ Training Mode" },
+    { value: "injured", label: "🤕 Injured" },
+    { value: "celebrating", label: "🎉 Celebrating" },
+    { value: "birthday", label: "🎂 Birthday Vibes" },
+    { value: "party-vibe", label: "🎉 Party Vibe" },
+    { value: "teamwork", label: "🤝 Teamwork" },
+    { value: "team-player", label: "🤜🤛 Team Player" },
+    { value: "team-spirit", label: "🤝 Team Spirit" },
+    { value: "training", label: "🏋️ Training Hard" },
+    { value: "focused-game", label: "🎮 Game Focused" },
+    { value: "happy", label: "😊 Happy" },
+    { value: "excited", label: "🤩 Excited" },
+    { value: "motivated", label: "💪 Motivated" },
+    { value: "grateful", label: "🙏 Grateful" },
+    { value: "proud", label: "🏆 Proud" },
+    { value: "determined", label: "🔥 Determined" },
+    { value: "optimistic", label: "🌈 Optimistic" },
+    { value: "confident", label: "😎 Confident" },
+    { value: "inspired", label: "✨ Inspired" },
+    { value: "focused", label: "🎯 Focused" },
+    { value: "energized", label: "⚡ Energized" },
+    { value: "blessed", label: "😇 Blessed" },
+    { value: "thankful", label: "🙌 Thankful" },
+    { value: "relaxed", label: "😌 Relaxed" },
+    { value: "hopeful", label: "🤞 Hopeful" },
+    { value: "victorious", label: "🥇 Victorious" },
+    { value: "strong", label: "🦾 Strong" },
+    { value: "calm", label: "🧘 Calm" },
+  ];
+
+  const districts = [
+    { label: "Cover any Place in Sri Lanka", value: "cover_all" },
+    { label: "Ampara", value: "Ampara" },
+    { label: "Anuradhapura", value: "Anuradhapura" },
+    { label: "Badulla", value: "Badulla" },
+    { label: "Batticaloa", value: "Batticaloa" },
+    { label: "Colombo", value: "Colombo" },
+    { label: "Galle", value: "Galle" },
+    { label: "Gampaha", value: "Gampaha" },
+    { label: "Hambantota", value: "Hambantota" },
+    { label: "Jaffna", value: "Jaffna" },
+    { label: "Kalutara", value: "Kalutara" },
+    { label: "Kandy", value: "Kandy" },
+    { label: "Kegalle", value: "Kegalle" },
+    { label: "Kilinochchi", value: "Kilinochchi" },
+    { label: "Kurunegala", value: "Kurunegala" },
+    { label: "Mannar", value: "Mannar" },
+    { label: "Matale", value: "Matale" },
+    { label: "Matara", value: "Matara" },
+    { label: "Monaragala", value: "Monaragala" },
+    { label: "Mullaitivu", value: "Mullaitivu" },
+    { label: "Nuwara Eliya", value: "Nuwara Eliya" },
+    { label: "Polonnaruwa", value: "Polonnaruwa" },
+    { label: "Puttalam", value: "Puttalam" },
+    { label: "Ratnapura", value: "Ratnapura" },
+    { label: "Trincomalee", value: "Trincomalee" },
+    { label: "Vavuniya", value: "Vavuniya" },
+  ];
+
+  const categoryOptions = [
+    { label: "Cricket", value: "cricket" },
+    { label: "football", value: "football" },
+    { label: "Rugby", value: "rugby" },
+    { label: "Volleyball", value: "volleyball" },
+    { label: "Badminton", value: "badminton" },
+    { label: "Tennis", value: "tennis" },
+    { label: "Hockey", value: "hockey" },
+    { label: "Table Tennis", value: "table_tennis" },
+    { label: "Online Gaming", value: "online_gaming" },
+    { label: "Swimming", value: "swimming" },
+    { label: "Athletics", value: "athletics" },
+    { label: "Cycling", value: "cycling" },
+    { label: "Martial Arts", value: "martial_arts" },
+    { label: "Other", value: "other" },
+  ];
+
+  const cityOptions = [
+    { label: "Any City", value: "Any City" },
+    { label: "Ampara", value: "Ampara" },
+    { label: "Anuradhapura", value: "Anuradhapura" },
+    { label: "Badulla", value: "Badulla" },
+    { label: "Batticaloa", value: "Batticaloa" },
+    { label: "Colombo", value: "Colombo" },
+    { label: "Galle", value: "Galle" },
+    { label: "Gampaha", value: "Gampaha" },
+    { label: "Hambantota", value: "Hambantota" },
+    { label: "Jaffna", value: "Jaffna" },
+    { label: "Kalutara", value: "Kalutara" },
+    { label: "Kandy", value: "Kandy" },
+    { label: "Kegalle", value: "Kegalle" },
+    { label: "Kilinochchi", value: "Kilinochchi" },
+    { label: "Kurunegala", value: "Kurunegala" },
+    { label: "Mannar", value: "Mannar" },
+    { label: "Matale", value: "Matale" },
+    { label: "Matara", value: "Matara" },
+    { label: "Monaragala", value: "Monaragala" },
+    { label: "Mullaitivu", value: "Mullaitivu" },
+    { label: "Nuwara Eliya", value: "Nuwara Eliya" },
+    { label: "Polonnaruwa", value: "Polonnaruwa" },
+    { label: "Puttalam", value: "Puttalam" },
+    { label: "Ratnapura", value: "Ratnapura" },
+    { label: "Trincomalee", value: "Trincomalee" },
+    { label: "Vavuniya", value: "Vavuniya" },
+  ];
 
   return (
     <div className="mt-40 container mx-auto px-0 sm:px-4 pb-12">
@@ -661,7 +738,7 @@ export default function Profile() {
           className="rounded-2xl shadow-2xl gap-2 px-6 py-3 border border-gray-200"
         >
           <div className="flex items-center gap-2">
-            <Newspaper  size={18} className="text-blue-600" />
+            <Newspaper size={18} className="text-blue-600" />
             <p className="text-black font-bold">+ Add News</p>
           </div>
         </Button>
@@ -687,6 +764,10 @@ export default function Profile() {
             <p className="text-black font-bold">+ Add Post</p>
           </div>
         </Button>
+      </div>
+
+      <div className="max-w-[700px] mx-auto mb-10">
+        <Story key={storyKey} onOpenModal={() => setOpenPostModal(true)} />
       </div>
 
       {/* navigate tabs */}
@@ -722,6 +803,16 @@ export default function Profile() {
           >
             News
           </button>
+          <button 
+            onClick={() => setActiveTab('apply')}
+            className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all ${
+              activeTab === "apply"
+                ? "border-b-4 border-blue-600 text-blue-600"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            Applications
+          </button>
         </div>
 
         <div className="mt-6">
@@ -752,7 +843,7 @@ export default function Profile() {
               ) : (
                 <div className="space-y-10">
                   {organizerEvents.map((event) => (
-                    <ProfilePost key={event._id} event={event} />
+                    <ProfileEvent key={event._id} event={event} />
                   ))}
                 </div>
               )}
@@ -770,7 +861,7 @@ export default function Profile() {
                   Recent Updates
                 </span>
               </div>
-
+              
               {isPostLoading ? (
                 <div className="text-center py-20 text-gray-400 font-bold animate-pulse uppercase">
                   Refreshing Feed...
@@ -801,6 +892,50 @@ export default function Profile() {
               </div>
             </div>
           )}
+
+          {/* --- APPLY TAB --- */}
+          {activeTab === "apply" && (
+            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                
+                {/* 1. Header Section */}
+                <div className="flex items-center justify-between border-l-4 border-blue-600 pl-4 mb-8">
+                    <h3 className="text-2xl font-black uppercase text-gray-800 tracking-tighter">
+                        Pending <span className="text-blue-600">Requests</span>
+                    </h3>
+                </div>
+
+                {isApplicationLoading ? (
+                    <div className="text-center py-20 animate-pulse font-black text-gray-400 tracking-widest uppercase">Syncing Applications...</div>
+                ) : applications.length === 0 ? (
+                    <div className="bg-white rounded-[2.5rem] p-20 text-center border-2 border-dashed border-gray-100 italic text-gray-400 font-bold">
+                        No applications received yet.
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {/* 2. පෙන්විය යුතු ප්‍රමාණයට පමණක් Slice කිරීම */}
+                        {applications.slice(0, visibleCount).map((app) => (
+                            <ApplicationCard 
+                                key={app._id} 
+                                app={app} 
+                                handleStatusChange={handleStatusChange} 
+                            />
+                        ))}
+
+                        {/* 3. Show More Button - තවත් දත්ත ඇත්නම් පමණක් පෙන්වයි */}
+                        {applications.length > visibleCount && (
+                            <div className="flex justify-center mt-12 mb-8">
+                                <button 
+                                    onClick={handleShowMore}
+                                    className="px-10 py-4 bg-white border-2 border-gray-100 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 hover:border-blue-600 hover:text-blue-600 transition-all shadow-sm active:scale-95"
+                                >
+                                    Show More Applications (+{applications.length - visibleCount})
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        )}
         </div>
       </div>
 
@@ -858,7 +993,11 @@ export default function Profile() {
                       className="hidden"
                       accept="image/*"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleFileChangeEvent(e, setEventImageURL, setEventImagePreviewUrl)
+                        handleFileChangeEvent(
+                          e,
+                          setEventImageURL,
+                          setEventImagePreviewUrl
+                        )
                       }
                     />
                   </label>
@@ -875,7 +1014,7 @@ export default function Profile() {
                 )}
               </div>
             </div>
-            
+
             <Input
               label="Event Name"
               required
@@ -1048,12 +1187,55 @@ export default function Profile() {
               options={feelingOptions}
             />
 
-            <Input
+            {/* <Input
               label="Mentions (comma separated)"
               value={mention}
               onChange={(e) => setMention(e.target.value)}
               placeholder="@mention"
-            />
+            /> */}            
+
+            {/* Search Input */}
+            <div className="relative">
+                <input
+                    type="text"
+                    className="w-full p-4 rounded-2xl border border-gray-100 focus:outline-blue-500 font-bold text-sm"
+                    placeholder="Search friends to mention..."
+                    value={mentionSearch}
+                    onChange={(e) => {
+                        setMentionSearch(e.target.value);
+                        setShowMentionResults(true);
+                    }}
+                    onFocus={() => setShowMentionResults(true)}
+                />
+
+                {/* Dropdown Results */}
+                {showMentionResults && mentionSearch && (
+                    <div className="absolute z-[150] w-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar">
+                        {allUsers
+                            .filter(u => u.fullname.toLowerCase().includes(mentionSearch.toLowerCase()))
+                            .map(u => (
+                                <div 
+                                    key={u._id}
+                                    onClick={() => toggleMention(u)}
+                                    className="p-4 hover:bg-blue-50 cursor-pointer flex items-center justify-between transition-colors"
+                                >
+                                    <span className="font-black text-xs uppercase tracking-widest text-gray-700">{u.fullname}</span>
+                                    <Plus size={14} className="text-blue-600" />
+                                </div>
+                            ))
+                        }
+                    </div>
+                )}
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-2">
+                {selectedMentions.map(m => (
+                    <span key={m._id} className="bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-2 shadow-sm">
+                        @{m.fullname}
+                        <X size={12} className="cursor-pointer" onClick={() => toggleMention(m)} />
+                    </span>
+                ))}
+            </div>
 
             <label
               htmlFor="description"
@@ -1076,6 +1258,33 @@ export default function Profile() {
               onChange={(e) => setTagInputText(e.target.value)}
               placeholder="#tags..."
             />
+
+            <div className="bg-blue-50/50 p-4 rounded-3xl border border-blue-100 my-4">
+              <label className="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-3 block ml-1">
+                Where to post?
+              </label>
+
+              <div className="grid grid-cols-3 gap-3">
+                {["post", "story", "both"].map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setPostTypeChoice(type)}
+                    className={`py-3 px-2 rounded-2xl text-[10px] font-black uppercase transition-all border-2 
+                          ${
+                            postTypeChoice === type
+                              ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-200 scale-105"
+                              : "bg-white border-gray-100 text-gray-400 hover:border-blue-200"
+                          }`}
+                  >
+                    {type === "both" ? "Feed & Story" : type}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[9px] text-gray-400 mt-3 ml-1 italic italic">
+                * Stories will disappear after 24 hours.
+              </p>
+            </div>
 
             <div className="flex justify-end space-x-4 mt-4">
               <Button

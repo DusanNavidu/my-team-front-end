@@ -1,28 +1,33 @@
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "../context/authContext"
-import { login, getMyDetails } from "../service/auth"
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { login, getMyDetails } from "../service/auth";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { LogIn, Mail, Lock, Zap } from "lucide-react";
 import { showAlert } from "../components/Swail";
 
 export default function Login() {
-  const [username, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const { setUser } = useAuth()
-  const navigate = useNavigate()
+  const [username, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault() 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage("");
 
     if (!username.trim() || !password.trim()) {
       setErrorMessage("Please enter both email and password.");
-      return
+      return;
     }
 
+    setIsLoading(true);
+
     try {
-      const data: any = await login(username, password)
+      const data: any = await login(username, password);
 
       if (data?.status === 403 || data?.message === "User is not active") {
         showAlert({
@@ -30,16 +35,17 @@ export default function Login() {
           title: "Account Deactivated",
           text: "Your account has been deactivated. Please contact support.",
         });
-        setErrorMessage("Login failed: your account is deactivated.");
+        setErrorMessage("Login failed: account is deactivated.");
+        setIsLoading(false);
         return;
       }
 
       if (data?.data?.accessToken) {
-        await localStorage.setItem("accessToken", data.data.accessToken)
-        await localStorage.setItem("refreshToken", data.data.refreshToken)
+        await localStorage.setItem("accessToken", data.data.accessToken);
+        await localStorage.setItem("refreshToken", data.data.refreshToken);
 
-        const resData = await getMyDetails()
-        setUser(resData.data)
+        const resData = await getMyDetails();
+        setUser(resData.data);
 
         const roles: string[] = resData.data.roles || [];
 
@@ -48,127 +54,119 @@ export default function Login() {
         } else if (roles.includes("ORGANIZER") || roles.includes("PLAYER") || roles.includes("USER")) {
           navigate("/home");
         } else {
-          showAlert({
-            icon: "error",
-            title: "Login failed",
-            text: "Please check your credentials and try again.",
-          });
-          setErrorMessage("Login failed, invalid user role.")
+          setErrorMessage("Invalid user role detected.");
         }
       } else {
-        showAlert({
-          icon: "error",
-          title: "Login failed",
-          text: "Please check your credentials and try again.",
-        });
-        setErrorMessage("Login failed, please check your credentials.")
+        setErrorMessage("Invalid credentials, please try again.");
       }
     } catch (err: any) {
-      console.error("Login error:", err)
-      
+      console.error("Login error:", err);
       if (err.response?.status === 403) {
-        showAlert({
-          icon: "error",
-          title: "Account Deactivated",
-          text: "Your account has been deactivated. Please contact support.",
-        });
-        setErrorMessage("Login failed: your account is deactivated.");
+        setErrorMessage("Your account is deactivated.");
       } else if (err.response?.status === 401) {
-        showAlert({
-          icon: "error",
-          title: "Login failed",
-          text: "Invalid email or password. Please try again.",
-        });
-        setErrorMessage("Login failed: invalid credentials.");
+        setErrorMessage("Invalid email or password.");
       } else {
-        showAlert({
-          icon: "error",
-          title: "Login failed",
-          text: "An unexpected error occurred. Please try again.",
-        });
-        setErrorMessage("An error occurred during login. Please try again.");
+        setErrorMessage("An unexpected error occurred.");
       }
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  }
+  };
 
   return (
-    <div className="">
-      <img src="src/assets/image/american-football-player-wearing-equipment.jpg" alt="" 
-        className="w-screen h-screen object-cover transform scale-x-[-1]"/>
-      
-      <h1 className="
-            text-center text-7xl font-extrabold absolute top-[150px] left-3/4 transform -translate-x-1/2 -translate-y-1/2
-            animate-float 
-            bg-gradient-to-r from-blue-600 via-white to-blue-600 
-            bg-clip-text text-transparent
-            drop-shadow-lg text-shadow-lg
-          ">
-          MY TEAM
-      </h1>
-
-      <form className="absolute top-1/2 left-3/4 transform -translate-x-1/2 -translate-y-1/2
-        w-2xl bg-blue-50/50 p-8 rounded-lg shadow-lg
-        flex flex-col">
-        
-        <h3 className="text-center font-semibold">Welcome back to my team!</h3>
-        <h2 className="text-4xl font-bold mb-6 text-center ">Login</h2>
-
-        <label htmlFor="email">Email:</label>
-        <input
-          type="text"
-          placeholder="example@gmail.com"
-          value={username}
-          onChange={(e) => setEmail(e.target.value)}
-          className="p-2 border border-black-300 rounded mb-4"
+    <div className="relative min-h-screen w-full flex items-center justify-center bg-black overflow-hidden p-4 md:p-10">
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="src/assets/image/soccer-players-action-professional-stadium.jpg" 
+          className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns"
+          alt=""
         />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-black/60 to-black" />
+      </div>
 
-        <label htmlFor="password">Password:</label>
-        <div className="relative mb-4">
-          <input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            placeholder="********"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-2 border border-black-300 rounded pr-10 w-full"
-          />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-black-600"
-          >
-            {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
-          </button>
-        </div>
-
-        <p className="text-right text-blue-700 italic hover:underline cursor-pointer mb-4">forgot password</p>
-
-        <div className="flex justify-center">
-          <button
-            onClick={handleLogin}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition w-9/10">
-            Login
-          </button>
-        </div>
+      <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20">
         
-        <small id="messages" className="text-center text-red-700 font-medium my-2">{errorMessage}</small>
-        <p className="text-center mb-6">Don't have an account? <a href="/register" className="text-blue-700 font-bold italic hover:underline">Register?</a></p>
-
-        <hr className="border-amber-50"/>
-
-        <p className="text-center mb-6">or</p>
-
-        <div className="flex justify-center">
-          <button className="bg-black text-white p-2 w-9/10 flex gap-5 justify-center rounded hover:bg-gray-900 transition">
-          <img className="w-[30px]" src="src/assets/image/google-color.png" alt="" />
-          Continue with Google</button>
+        <div className="hidden lg:block flex-1 space-y-4 text-left animate-in slide-in-from-left duration-1000">
+          <div className="flex items-center gap-3 text-blue-500 font-black tracking-[0.4em] uppercase text-sm mb-4">
+            <Zap size={20} fill="currentColor" /> <span>The Elite Arena</span>
+          </div>
+          <h1 className="text-8xl xl:text-9xl font-black italic text-white leading-[0.8] tracking-tighter uppercase drop-shadow-2xl">
+            STEP <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">INSIDE</span>
+          </h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-lg max-w-sm border-l-4 border-blue-600 pl-6">
+            Your Sports Legacy Starts Here.
+          </p>
         </div>
 
-      </form>
+        <div className="w-full max-w-[500px] glass-card p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl animate-in zoom-in duration-500">
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Login</h2>
+            <p className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mt-2">Welcome back, Athlete!</p>
+          </div>
+
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1 transition-colors group-focus-within:text-blue-500">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500" size={18} />
+                <input 
+                  type="email" value={username} onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-5 py-4 text-white focus:border-blue-500 focus:bg-white/10 outline-none transition-all font-bold backdrop-blur-md"
+                  placeholder="name@arena.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-1 transition-colors group-focus-within:text-blue-500">Secret Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500" size={18} />
+                <input 
+                  type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 py-4 text-white focus:border-blue-500 focus:bg-white/10 outline-none transition-all font-bold backdrop-blur-md text-sm"
+                  placeholder="••••••••"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500">
+                  {showPassword ? <FaRegEyeSlash size={20}/> : <FaRegEye size={20}/>}
+                </button>
+              </div>
+            </div>
+
+            {errorMessage && (
+                <p className="text-red-500 text-xs font-bold uppercase tracking-tight text-center animate-pulse">{errorMessage}</p>
+            )}
+
+            <button 
+                type="button" 
+                onClick={handleLogin}
+                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-900/40 transition-all active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-xs skew-x-[-10deg] disabled:opacity-50 disabled:cursor-not-allowed">
+              <div className="skew-x-[10deg] flex items-center gap-2">
+                <LogIn size={18}/> {isLoading ? "Authenticating..." : "Authenticate"}
+              </div>
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-xs font-bold text-gray-500">
+            NOT REGISTERED? <Link to="/register" className="text-blue-500 italic uppercase ml-1 hover:underline tracking-widest">Join Team</Link>
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        .glass-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(25px) saturate(180%);
+          -webkit-backdrop-filter: blur(25px) saturate(180%);
+        }
+        @keyframes kenburns {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.2); }
+        }
+        .animate-ken-burns {
+          animation: kenburns 20s ease infinite alternate;
+        }
+      `}</style>
     </div>
-  )
+  );
 }
