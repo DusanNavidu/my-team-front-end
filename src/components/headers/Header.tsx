@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 import Modal from "../Modal/Modal";
 import { changeUserRoleToPlayer } from "../../service/auth";
 import { showAlert } from "../../components/Swail";
-import user from "../../assets/image/9131478.png";
+import userimage from "../../assets/image/9131478.png";
 
 export default function Header() {
   const { user, setUser } = useAuth();
@@ -208,7 +208,7 @@ export default function Header() {
             ) : null}
             <img
               className="w-[30px] border rounded-4xl border-amber-50"
-              src={user}
+              src={userimage}
               alt="User Avatar"
             />
           </div>
