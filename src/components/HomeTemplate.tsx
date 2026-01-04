@@ -22,19 +22,16 @@ export default function HomeTemplate() {
     fetchPosts();
   }, []);
 
-  // Post බෙදා වෙන් කිරීම
   const firstThreePosts = posts.slice(0, 3);
   const remainingPosts = posts.slice(3);
 
   return (
     <div className="max-w-[700px] mx-auto px-0 sm:px-4 mt-10">
       
-      {/* 🟢 1. Story Section (සියල්ලටම උඩින්) */}
       <div className="w-full mb-8">
         <VisitStory />
       </div>
 
-      {/* 🔵 2. පළමු පෝස්ට් 3 */}
       <div className="w-full">
         {loading ? (
             <div className="w-full h-64 bg-gray-100 animate-pulse rounded-[2.5rem] mb-8" />
@@ -45,12 +42,10 @@ export default function HomeTemplate() {
         )}
       </div>
 
-      {/* 👥 3. Suggested Athletes (පෝස්ට් 3කට පසුව) */}
       <section className="w-full bg-gray-50/50 py-6 px-2 rounded-[2.5rem] border border-gray-100 mb-8">
         <PlayerCard />
       </section>
 
-      {/* 🔴 4. ඉතිරි පෝස්ට් සියල්ල */}
       <div className="w-full pb-20">
         {!loading && remainingPosts.map((post) => (
           <HomePosts key={post._id} initialPost={post} />
