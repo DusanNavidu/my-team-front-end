@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import HomeTemplate from "../components/HomeTemplate";
-import { Rocket, Plus, Users, Calendar, Trophy, Zap } from "lucide-react";
+import { Plus, Users, Calendar, Trophy, Zap } from "lucide-react";
 
 export default function Home() {
   const { user } = useAuth();
@@ -16,7 +16,6 @@ export default function Home() {
   ];
 
   const hasRole = (role: string) => user?.roles?.includes(role) || false;
-  const isPlayer = hasRole("PLAYER");
   const isOrganizer = hasRole("ORGANIZER");
 
   useEffect(() => {

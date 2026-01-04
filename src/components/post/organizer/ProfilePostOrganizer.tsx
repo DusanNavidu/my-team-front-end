@@ -8,7 +8,6 @@ import {
   Share2,
   Calendar,
   MapPin,
-  Clock,
 } from "lucide-react";
 import moment from "moment";
 import { useAuth } from "../../../context/authContext";

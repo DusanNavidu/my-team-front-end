@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getTenLatestStories, type PostData } from "../../../service/post";
 import { Heart, X } from "lucide-react";
 import moment from "moment";

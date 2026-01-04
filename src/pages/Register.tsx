@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { register } from "../service/auth";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { UserPlus, Mail, Lock, User, ShieldCheck, Zap } from "lucide-react";
+import { UserPlus, Mail, Lock, User, Zap } from "lucide-react";
 
 export default function Register() {
   const [email, setEmail] = useState("");

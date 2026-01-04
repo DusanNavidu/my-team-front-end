@@ -23,9 +23,6 @@ import {
   Plus,
   Calendar,
   Newspaper,
-  ExternalLink,
-  Check,
-  LayoutGrid
 } from "lucide-react";
 import { createPostService } from "../../service/post";
 import { getMyPosts, type PostData } from "../../service/post";
@@ -102,9 +99,7 @@ export default function Profile() {
   const [isPostLoading, setIsPostLoading] = useState(false);
   const [postsList, setPostsList] = useState<PostData[]>([]);
   const [openPostModal, setOpenPostModal] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
-  const [postTags, setPostTags] = useState<string[]>([]);
+  const [postTags] = useState<string[]>([]);
 
   // Event Creation States
   const [openModalEvent, setOpenModalEvent] = useState(false);
@@ -333,12 +328,6 @@ export default function Profile() {
       </div>
     );
   }
-
-  const DEFAULT_BANNER =
-    "https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=2069&auto=format&fit=crop";
-  const DEFAULT_LOGO = `https://ui-avatars.com/api/?name=${
-    user?.fullname || "Player"
-  }&background=random&size=128`;
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,

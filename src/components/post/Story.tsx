@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getMyStoryService, type PostData } from '../../service/post';
 import { Plus, X, Heart } from 'lucide-react';
 import { getOrganizerDetails } from "../../service/organizer";

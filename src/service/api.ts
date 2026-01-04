@@ -5,7 +5,9 @@ import axios, { AxiosError } from "axios"
 import { refreshTokens } from "./auth"
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1"
+  // ⚠️ අවධානය: මෙතැනට ඔබේ Vercel backend URL එක ලබා දෙන්න. 
+  // "web.app" යනු Frontend එකයි, එය මෙහි භාවිතා නොකරන්න.
+  baseURL: "https://your-backend-name.vercel.app/api/v1", 
 })
 
 // An interceptor is like a middleware for Axios requests and responses.

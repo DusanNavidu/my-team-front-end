@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext";
 import {
   Users,

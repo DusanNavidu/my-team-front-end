@@ -1,4 +1,3 @@
-import React from 'react';
 import { type PostData } from '../../../service/post';
 
 export default function PlayerStoryCard({ story, onClick }: { story: PostData, onClick: () => void }) {

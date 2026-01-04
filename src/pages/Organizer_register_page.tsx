@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { OrganizerRegister } from "../service/organizer";
 import Input from "../components/Input";
 import Select from "../components/Select";

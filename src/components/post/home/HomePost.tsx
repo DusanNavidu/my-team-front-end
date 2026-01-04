@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import moment from 'moment';
 import { useAuth } from '../../../context/authContext';
@@ -45,9 +45,6 @@ export default function HomePosts({ initialPost }: HomePostsProps) {
     };
 
     if (!initialPost) return null;
-
-    const isOrganizer = user?.roles?.includes("ORGANIZER");
-    const isPlayer = user?.roles?.includes("PLAYER");
 
     return (
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md mb-8">

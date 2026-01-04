@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { type PostData, likePostService } from '../../service/post';
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react';
 import { getPlayerProfile } from '../../service/playerDetails';

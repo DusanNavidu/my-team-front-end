@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Check, X, ExternalLink, UserPlus, Mail, Calendar, Clock } from 'lucide-react';
+import { Check, X, ExternalLink, UserPlus, Mail, Clock } from 'lucide-react';
 import moment from 'moment';
 
 interface Props {

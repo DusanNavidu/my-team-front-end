@@ -33,7 +33,7 @@ export default function AdminUsersManage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [currentFilter, setCurrentFilter] = useState("ALL"); 
- 
+
   const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
   const [totalOrganizersCount, setTotalOrganizersCount] = useState<number>(0);
   const [totalPlayersCount, setTotalPlayersCount] = useState<number>(0);
@@ -42,148 +42,87 @@ export default function AdminUsersManage() {
   const [totalDeactivatedUsersCount, setTotalDeactivatedUsersCount] = useState<number>(0);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = async (query: string) => {
-    if (!query.trim()) {
-      setIsSearching(false);
-      loadData(1, currentFilter);
-      return;
-    }
-
-    setLoading(true);
-    setIsSearching(true);
-
-    try {
-      const res = await searchUsers(query, 1);
-      setUsers(res.data || []);
-      setTotalPages(res.pagination?.totalPages || 1);
-      setCurrentPage(1);
-    } catch (error) {
-      console.error("Search failed", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchTotalUsersCount = async () => {
-      try {
-        const count = await getAllUsersCount();
-        setTotalUsersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch user count", error);
-        setTotalUsersCount(0);
-      }
-    };
-    fetchTotalUsersCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchTotalOrganizersCount = async () => {
-      try {
-        const count = await getAllOrganizersCount();
-        setTotalOrganizersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch organizer count", error);
-        setTotalOrganizersCount(0);
-      }
-    };
-    fetchTotalOrganizersCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchTotalPlayersCount = async () => {
-      try {
-        const count = await getAllPlayersCount();
-        setTotalPlayersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch player count", error);
-        setTotalPlayersCount(0);
-      }
-    };
-    fetchTotalPlayersCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchTotalUsersByRoleCount = async () => {
-      try {
-        const count = await getAllUsersByRoleCount();
-        setTotalUsersByRoleCount(count);
-      } catch (error) {
-        console.error("Failed to fetch users by role count", error);
-        setTotalUsersByRoleCount(0);
-      }
-    };
-    fetchTotalUsersByRoleCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchTotalActiveUsersCount = async () => {
-      try {
-        const count = await getAllActiveUsersCount();
-        setTotalActiveUsersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch active user count", error);
-        setTotalActiveUsersCount(0);
-      }
-    };
-    fetchTotalActiveUsersCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchTotalDeactivatedUsersCount = async () => {
-      try {
-        const count = await getAllDeactivatedUsersCount();
-        setTotalDeactivatedUsersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch deactivated user count", error);
-        setTotalDeactivatedUsersCount(0);
-      }
-    };
-    fetchTotalDeactivatedUsersCount();
-  }, []);
-
-  const loadData = useCallback(async (page: number, filter: string) => {
+  // දත්ත ලබාගැනීමේ ප්‍රධාන function එක
+  const loadData = useCallback(async (page: number, filter: string, query: string) => {
     setLoading(true);
     try {
       let res;
-      switch (filter) {
-        case "ORGANIZER":
-          res = await getAllOrganizers(page);
-          break;
-        case "PLAYER":
-          res = await getAllPlayers(page);
-          break;
-        case "USERS":
-          res = await getAllUsersByRole(page);
-          break;
-        case "ACTIVE":
-          res = await getAllActiveUsers(page);
-          break;
-        case "DEACTIVATED":
-          res = await getAllDeactivatedUsers(page);
-          break;
-        default:
-          res = await getAllUsers(page);
+      // සෙවුම් පදයක් තිබේ නම් searchUsers කැඳවයි
+      if (query.trim()) {
+        res = await searchUsers(query, page);
+      } else {
+        // නැතහොත් ෆිල්ටරය අනුව අදාළ සර්විස් එක කැඳවයි
+        switch (filter) {
+          case "ORGANIZER":
+            res = await getAllOrganizers(page);
+            break;
+          case "PLAYER":
+            res = await getAllPlayers(page);
+            break;
+          case "USERS":
+            res = await getAllUsersByRole(page);
+            break;
+          case "ACTIVE":
+            res = await getAllActiveUsers(page);
+            break;
+          case "DEACTIVATED":
+            res = await getAllDeactivatedUsers(page);
+            break;
+          default:
+            res = await getAllUsers(page);
+        }
       }
       
       setUsers(res.data || []);
       setTotalPages(res.pagination?.totalPages || 1);
     } catch (error) {
-      console.error(`Failed to load ${filter}:`, error);
+      console.error(`Failed to load data:`, error);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Counts ලබාගැනීම
+  const fetchCounts = useCallback(async () => {
+    try {
+      const [all, org, play, role, active, deactive] = await Promise.all([
+        getAllUsersCount(),
+        getAllOrganizersCount(),
+        getAllPlayersCount(),
+        getAllUsersByRoleCount(),
+        getAllActiveUsersCount(),
+        getAllDeactivatedUsersCount()
+      ]);
+      setTotalUsersCount(all);
+      setTotalOrganizersCount(org);
+      setTotalPlayersCount(play);
+      setTotalUsersByRoleCount(role);
+      setTotalActiveUsersCount(active);
+      setTotalDeactivatedUsersCount(deactive);
+    } catch (error) {
+      console.error("Failed to fetch counts", error);
+    }
+  }, []);
+
   useEffect(() => {
-    loadData(currentPage, currentFilter);
-  }, [currentPage, currentFilter, loadData]);
+    fetchCounts();
+  }, [fetchCounts]);
+
+  useEffect(() => {
+    loadData(currentPage, currentFilter, searchQuery);
+  }, [currentPage, currentFilter, searchQuery, loadData]);
 
   const handleFilterChange = (filter: string) => {
+    setSearchQuery(""); // Filter එක වෙනස් කරන විට search එක clear කරයි
     setCurrentFilter(filter);
     setCurrentPage(1);
+  };
+
+  const handleSearchInput = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+    // loadData ස්වයංක්‍රීයව useEffect එක හරහා කැඳවනු ලැබේ
   };
 
   const formatDate = (dateString: string) => {
@@ -207,7 +146,7 @@ export default function AdminUsersManage() {
     try {
       await updateUser(selectedUser._id, { fullname, email });
       setIsModalOpen(false);
-      loadData(currentPage, currentFilter);
+      loadData(currentPage, currentFilter, searchQuery);
     } catch (error) {
       alert("Update failed");
     }
@@ -216,7 +155,8 @@ export default function AdminUsersManage() {
   const handleToggleStatus = async (user: UserData) => {
     try {
       await changeUserStatus(user._id);
-      loadData(currentPage, currentFilter);
+      loadData(currentPage, currentFilter, searchQuery);
+      fetchCounts(); // ස්ටේටස් එක වෙනස් වූ පසු counts update කරයි
     } catch (error) {
       alert("Status change failed");
     }
@@ -227,23 +167,17 @@ export default function AdminUsersManage() {
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Manage Users</h1>
 
       <div className="flex items-center gap-4 mb-6">
-        
-        <input type="text" value={searchQuery}
-          onChange={(e) => {
-            const value = e.target.value;
-            setSearchQuery(value);
-            handleSearch(value);
-          }} 
-          className="w-full border rounded-2xl px-4 py-2" placeholder="Search by name or email"
+        <input 
+          type="text" 
+          value={searchQuery}
+          onChange={(e) => handleSearchInput(e.target.value)} 
+          className="w-full border rounded-2xl px-4 py-2" 
+          placeholder="Search by name or email"
         />
 
         <div className="flex gap-4">
-          <Button color="blue" className="w-50">
-            Add New User +
-          </Button>
-          <Button color="orange" className="w-55">
-            Add New Admin +
-          </Button>
+          <Button color="blue" className="w-50">Add New User +</Button>
+          <Button color="orange" className="w-55">Add New Admin +</Button>
         </div>
       </div>
 
@@ -251,43 +185,37 @@ export default function AdminUsersManage() {
         <Button color="darkBlue" onClick={() => handleFilterChange("ALL")}>
           All Users
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalUsersCount}</span>
+            +{totalUsersCount}
           </span>
         </Button>
         <Button color="darkBlue" onClick={() => handleFilterChange("ORGANIZER")}>
           Organizers
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalOrganizersCount}</span>
+            +{totalOrganizersCount}
           </span>
         </Button>
         <Button color="darkBlue" onClick={() => handleFilterChange("PLAYER")}>
           Players
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalPlayersCount}</span>
+            +{totalPlayersCount}
           </span>
         </Button>
         <Button color="darkBlue" onClick={() => handleFilterChange("USERS")}>
           Users
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalUsersByRoleCount}</span>
+            +{totalUsersByRoleCount}
           </span>
         </Button>
         <Button color="green" onClick={() => handleFilterChange("ACTIVE")}>
           Active
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalActiveUsersCount}</span>
+            +{totalActiveUsersCount}
           </span>
         </Button>
         <Button color="red" onClick={() => handleFilterChange("DEACTIVATED")}>
           Deactivated
           <span className="bg-white text-gray-800 ml-2 px-2 py-1 rounded-full text-sm font-medium">
-            +
-            <span className="">{totalDeactivatedUsersCount}</span>
+            +{totalDeactivatedUsersCount}
           </span>
         </Button>
       </div>
@@ -347,26 +275,10 @@ export default function AdminUsersManage() {
           />
 
           <div className="flex items-center justify-between mt-6 px-4 py-3 bg-white border-t border-gray-200 sm:px-6 rounded-lg shadow-sm">
-            <div className="flex justify-between flex-1 sm:hidden">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Previous
-              </Button>
-              <Button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
-                Next
-              </Button>
-            </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
-                  Showing page{" "}
-                  <span className="font-medium">{currentPage}</span> of{" "}
-                  <span className="font-medium">{totalPages}</span>
+                  Showing page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
                 </p>
               </div>
               <div className="flex gap-2">
@@ -391,26 +303,12 @@ export default function AdminUsersManage() {
       )}
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-bold mb-4">
-          Update {selectedUser?.fullname}
-        </h2>
-        <Input
-          label="Full Name"
-          value={fullname}
-          onChange={(e) => setFullname(e.target.value)}
-        />
-        <Input
-          label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <h2 className="text-xl font-bold mb-4">Update {selectedUser?.fullname}</h2>
+        <Input label="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} />
+        <Input label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <div className="flex justify-end gap-3 mt-6">
-          <Button color="gray" onClick={() => setIsModalOpen(false)}>
-            Cancel
-          </Button>
-          <Button color="blue" onClick={handleUpdateUser}>
-            Save Changes
-          </Button>
+          <Button color="gray" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+          <Button color="blue" onClick={handleUpdateUser}>Save Changes</Button>
         </div>
       </Modal>
     </div>

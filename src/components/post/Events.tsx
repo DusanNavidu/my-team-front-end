@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MapPin, Calendar, Clock, UserPlus, Eye, Info, CheckCircle } from "lucide-react";
+import { Heart, MessageCircle, MapPin, Calendar, Clock, UserPlus, Eye, Info, CheckCircle } from "lucide-react";
 import moment from "moment";
 import { useAuth } from "../../context/authContext";
 import type { EventData } from "../../service/event";

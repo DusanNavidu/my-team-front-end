@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getPlayerProfiles } from '../../../service/auth'; 
-import { ShieldCheck, UserPlus, X } from 'lucide-react';
+import { UserPlus, X } from 'lucide-react';
 import { Link } from 'react-router-dom'; // 👈 Link එකතු කරන්න
 
 export default function PlayerCard() {

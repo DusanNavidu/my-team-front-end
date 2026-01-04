@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import type { EventData } from "../../../service/event";
-import Button from "../../Button";
 import {
   Heart,
   MessageCircle,
-  UserPlus,
   Share2,
   Calendar,
   MapPin,
-  Clock,
   MoreVertical,
 } from "lucide-react";
 import moment from "moment";
-import { useAuth } from "../../../context/authContext";
 
 interface EventCardProps {
   event: EventData;
@@ -24,46 +20,6 @@ const VisitProfilePostOrganizer: React.FC<EventCardProps> = ({ event }) => {
 
   const formatDate = (dateString: string) => {
     return moment(dateString).format("MMMM Do, YYYY");
-  };
-  const { user } = useAuth();
-  const isOrganizer =
-    user?.roles?.includes("ORGANIZER") || user?.roles?.includes("USER");
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "UPCOMING":
-        return "bg-green-100 text-green-800";
-      case "PAST":
-        return "bg-gray-100 text-gray-800";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800";
-      case "BANNED":
-        return "bg-black text-white";
-      default:
-        return "bg-blue-100 text-blue-800";
-    }
-  };
-
-  const calculateTimeAgo = (dateString: string) => {
-    const now = moment();
-    const createdAt = moment(dateString);
-    const diff = moment.duration(now.diff(createdAt));
-
-    const minutes = diff.asMinutes();
-    const hours = diff.asHours();
-    const days = diff.asDays();
-    const weeks = diff.asWeeks();
-    const months = diff.asMonths();
-    const years = diff.asYears();
-
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${Math.floor(minutes)} minutes ago`;
-    if (hours < 24) return `${Math.floor(hours)} hours ago`;
-    if (days < 7) return `${Math.floor(days)} days ago`;
-    if (weeks < 4) return `${Math.floor(weeks)} weeks ago`;
-    if (months < 12) return `${Math.floor(months)} months ago`;
-
-    return `${Math.floor(years)} years ago`;
   };
 
   return (

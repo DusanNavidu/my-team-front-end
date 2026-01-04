@@ -128,7 +128,7 @@ export default function PlayerProfile() {
     const fetchUsers = async () => {
         try {
             const res = await getAllUserFullnames();
-            console.log("Fetched Users:", res.data); // මෙතැනට දත්ත එනවාදැයි පරීක්ෂා කරන්න
+            console.log("Fetched Users:", res.data);
             setAllUsers(res.data || []);
         } catch (err) {
             console.error("Error fetching users:", err);
@@ -177,7 +177,10 @@ export default function PlayerProfile() {
     fd.append("description", description);
     fd.append("feeling", feeling);
     fd.append("postingType", postTypeChoice);
-    fd.append("mention", JSON.stringify(selectedMentions.map(m => m.fullname)));
+    fd.append(
+      "mention",
+      JSON.stringify(mention.split(" ").map((m) => m.trim()))
+    );
     fd.append(
       "tagInput",
       JSON.stringify(tagInputText.split(" ").map((t) => t.trim()))
@@ -248,10 +251,6 @@ export default function PlayerProfile() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handlePostOpenModal = () => {
-    setOpenPostModal(true);
   };
 
   return (
