@@ -1,17 +1,9 @@
-// axiosConfig
-// apiService
-
 import axios, { AxiosError } from "axios";
 import { refreshTokens } from "./auth";
 
 const api = axios.create({
-  // ⚠️ අවධානය: මෙතැනට ඔබේ Vercel backend URL එක ලබා දෙන්න.
-  // "web.app" යනු Frontend එකයි, එය මෙහි භාවිතා නොකරන්න.
   baseURL: "https://my-team-back-end.vercel.app/api/v1",
 });
-
-// An interceptor is like a middleware for Axios requests and responses.
-// It lets you intercept, modify, or analyze any API request or response before it goes out or comes back.
 
 const PUBLIC_ENDPOINTS = ["/auth/login", "/auth/register"];
 

@@ -77,7 +77,7 @@ export default function Login() {
     <div className="relative min-h-screen w-full flex items-center justify-center bg-black overflow-hidden p-4 md:p-10">
       <div className="absolute inset-0 z-0">
         <img 
-          src="src/assets/image/soccer-players-action-professional-stadium.jpg" 
+          src="assets/image/soccer-players-action-professional-stadium.jpg" 
           className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns"
           alt=""
         />
