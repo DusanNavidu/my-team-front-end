@@ -5,6 +5,7 @@ import { login, getMyDetails } from "../service/auth";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LogIn, Mail, Lock, Zap } from "lucide-react";
 import { showAlert } from "../components/Swail";
+import stadiumBg from "../assets/image/soccer-players-action-professional-stadium.jpg";
 
 export default function Login() {
   const [username, setEmail] = useState("");
@@ -76,11 +77,11 @@ export default function Login() {
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-black overflow-hidden p-4 md:p-10">
       <div className="absolute inset-0 z-0">
-        <img 
-          src="assets/image/soccer-players-action-professional-stadium.jpg" 
-          className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns"
-          alt=""
-        />
+      <img 
+        src={stadiumBg} 
+        className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns"
+        alt="Stadium Background"
+      />
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-black/60 to-black" />
       </div>
 
