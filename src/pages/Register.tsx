@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { register } from "../service/auth";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { UserPlus, Mail, Lock, User, Zap } from "lucide-react";
+import stadiumBg from "../assets/image/american-football-player-wearing-equipment.jpg";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -24,7 +25,7 @@ export default function Register() {
       {/* Background Image with Ken Burns Effect */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="src/assets/image/american-football-player-wearing-equipment.jpg" 
+          src={stadiumBg} 
           className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns scale-x-[-1]"
           alt=""
         />

@@ -2,17 +2,22 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import HomeTemplate from "../components/HomeTemplate";
 import { Plus, Users, Calendar, Trophy, Zap } from "lucide-react";
+import homeImage1 from "../assets/image/soccer-players-action-professional-stadium.jpg";
+import homeImage2 from "../assets/image/american-football-players-wearing-equipment.jpg";
+import homeImage3 from "../assets/image/cricket-batsman.jpg";
+import homeImage4 from "../assets/image/close-up-athlete-playing-soccer.jpg";
+import homeImage5 from "../assets/image/medium-shot-victorious-gamers-winning.jpg";
 
 export default function Home() {
   const { user } = useAuth();
   const [current, setCurrent] = useState(0);
 
   const images = [
-    "src/assets/image/soccer-players-action-professional-stadium.jpg",
-    "src/assets/image/american-football-players-wearing-equipment.jpg",
-    "src/assets/image/cricket-batsman.jpg",
-    "src/assets/image/close-up-athlete-playing-soccer.jpg",
-    "src/assets/image/medium-shot-victorious-gamers-winning.jpg",
+    homeImage1,
+    homeImage2,
+    homeImage3,
+    homeImage4,
+    homeImage5,
   ];
 
   const hasRole = (role: string) => user?.roles?.includes(role) || false;

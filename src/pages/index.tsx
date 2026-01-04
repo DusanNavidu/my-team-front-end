@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Rocket, UserPlus } from "lucide-react";
+import stadium1 from "../assets/image/soccer-game-concept.jpg";
+import stadium2 from "../assets/image/cricket-match-with-player.jpg";
+import stadium3 from "../assets/image/cyclist-riding-bicycle-nature.jpg";
 
 export default function Index() {
   const images = [
-    "src/assets/image/soccer-game-concept.jpg",
-    "src/assets/image/cricket-match-with-player.jpg",
-    "src/assets/image/cyclist-riding-bicycle-nature.jpg"
+    stadium1,
+    stadium2,
+    stadium3
   ];
 
   const [current, setCurrent] = useState(0);
