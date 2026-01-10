@@ -30,10 +30,9 @@ export default function Contact() {
     return (
         <div className="relative min-h-screen w-full bg-zinc-950 text-white overflow-hidden pt-[120px] pb-10">
             
-            {/* 🏟️ Background Image with Ken Burns Effect */}
             <div className="absolute inset-0 z-0">
                 <img 
-                    src="src/assets/image/soccer-players-action-professional-stadium.jpg" 
+                    src={"https://i.ibb.co/TDV1LcmP/soccer-players-action-professional-stadium.jpg"} 
                     className="w-full h-full object-cover opacity-25 animate-ken-burns"
                     alt="Stadium"
                 />
@@ -42,7 +41,6 @@ export default function Contact() {
 
             <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
                 
-                {/* 🏆 Header Section - Compact */}
                 <div className="text-center mb-10 animate-in fade-in slide-in-from-top duration-1000">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 text-blue-400 rounded-full text-[9px] font-black uppercase tracking-[0.3em] mb-4">
                         <Zap size={12} fill="currentColor" /> The Support Arena

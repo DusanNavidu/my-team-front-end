@@ -6,9 +6,8 @@ import {
   BarChart3,
   TrendingUp,
   DollarSign,
-} from "lucide-react"; // 💡 අවශ්‍ය Icons
+} from "lucide-react";
 
-// Dummy Data (අපිට සත්‍ය API calls වලින් මෙය ලබා ගත හැක)
 const dashboardMetrics = [
   {
     title: "Total Registered Users",
@@ -45,16 +44,12 @@ const dashboardMetrics = [
 ];
 
 const AdminDashboard = () => {
-  // 💡 Auth Context එකෙන් user details ලබා ගැනීම
   const { user } = useAuth();
 
-  // 💡 මෙහිදී ඔබට API calls මගින් සත්‍ය දත්ත load කළ හැක
   // useEffect(() => { /* Fetch data logic */ }, []);
 
   return (
-    // mt-16 යනු Sidebar එකේ උඩ කොටසට ඉඩ දීම සඳහාය (Sidebar එක fixed නම්)
     <div className="pt-8 pb-10 px-6 sm:px-10 min-h-screen bg-gray-50">
-      {/* --- Dashboard Header --- */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           Welcome, {user?.name || "Admin"}
@@ -64,7 +59,6 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      {/* --- 1. Metric Cards Grid --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {dashboardMetrics.map((metric) => {
           const IconComponent = metric.icon;
@@ -100,20 +94,16 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* --- 2. Main Content Grid (Charts and Tables) --- */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart/Graph Area (2/3 width) */}
         <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Event Registration Trends
           </h2>
           <div className="h-80 w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
-            {/* 💡 මෙහිදී ඔබට Chart Component එකක් (e.g., Recharts, Chart.js) එකතු කළ හැක */}
             <BarChart3 className="w-8 h-8 mr-2" /> Chart Placeholder
           </div>
         </div>
 
-        {/* Recent Activity/Log (1/3 width) */}
         <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Recent System Activity
@@ -131,7 +121,6 @@ const AdminDashboard = () => {
               <span>User 'Dusan' logged in</span>
               <span className="text-gray-500 text-xs">3 hours ago</span>
             </li>
-            {/* ... more activities */}
           </ul>
           <button className="mt-6 w-full text-blue-600 hover:text-blue-800 text-sm font-medium">
             View All Logs

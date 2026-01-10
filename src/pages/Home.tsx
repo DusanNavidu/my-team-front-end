@@ -2,22 +2,17 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/authContext";
 import HomeTemplate from "../components/HomeTemplate";
 import { Plus, Users, Calendar, Trophy, Zap } from "lucide-react";
-import homeImage1 from "../assets/image/soccer-players-action-professional-stadium.jpg";
-import homeImage2 from "../assets/image/american-football-players-wearing-equipment.jpg";
-import homeImage3 from "../assets/image/cricket-batsman.jpg";
-import homeImage4 from "../assets/image/close-up-athlete-playing-soccer.jpg";
-import homeImage5 from "../assets/image/medium-shot-victorious-gamers-winning.jpg";
 
 export default function Home() {
   const { user } = useAuth();
   const [current, setCurrent] = useState(0);
 
   const images = [
-    homeImage1,
-    homeImage2,
-    homeImage3,
-    homeImage4,
-    homeImage5,
+    "https://i.ibb.co/TDV1LcmP/soccer-players-action-professional-stadium.jpg",
+    "https://i.ibb.co/jv71yJ4c/cricket-match-with-player.jpg",
+    "https://i.ibb.co/ycVX5S4q/close-up-athlete-playing-soccer.jpg",
+    "https://i.ibb.co/FbdT9G0J/safely-motorcycle-helmet.jpg",
+    "https://i.ibb.co/BX1Mxnv/medium-shot-victorious-gamers-winning.jpg",
   ];
 
   const hasRole = (role: string) => user?.roles?.includes(role) || false;
@@ -33,11 +28,8 @@ export default function Home() {
   return (
     <div className="w-full bg-gray-50 min-h-screen">
       
-      {/* 🏟️ FULL SCREEN HERO SECTION */}
-      {/* Header එක සඳහා mt-[150px] ලබා දී ඇති අතර උස h-[calc(100vh-150px)] ලෙස සකසා ඇත */}
       <div className="relative w-full h-[calc(100vh-150px)] flex items-center overflow-hidden bg-black mt-[150px]">
         
-        {/* Animated Background Images with Ken Burns Effect */}
         {images.map((img, index) => (
           <div
             key={index}
@@ -53,21 +45,17 @@ export default function Home() {
           </div>
         ))}
 
-        {/* Dynamic Overlays for Better Text Readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent z-1"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-1"></div>
 
-        {/* Hero Content Area */}
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-left-10 duration-1000">
             
-            {/* Animated Badge */}
             <div className="inline-flex items-center space-x-3 bg-blue-600/20 backdrop-blur-md border border-blue-500/30 px-4 py-2 rounded-full text-blue-400 font-black tracking-[0.3em] uppercase text-[10px] animate-bounce">
               <Zap size={14} fill="currentColor" />
               <span>Unleash Your Potential</span>
             </div>
             
-            {/* Massive Sports Headline */}
             <h2 className="text-white text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase leading-[0.85] italic tracking-tighter drop-shadow-2xl">
               BUILD YOUR <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400">
@@ -75,16 +63,13 @@ export default function Home() {
               </span>
             </h2>
             
-            {/* Impactful Description */}
             <p className="text-gray-200 text-sm md:text-lg font-medium max-w-2xl leading-relaxed border-l-4 border-blue-600 pl-6 backdrop-blur-[2px] py-2">
               The ultimate arena where elite athletes connect with professional organizers. 
               Discover matches, build powerful teams, and transform your sports passion into a professional reality.
             </p>
 
-            {/* Skewed Action Buttons */}
             <div className="flex flex-wrap gap-4 pt-4">
               
-              {/* Conditional Button: Create Team (For Players/Users) */}
               {user && !isOrganizer && (
                 <button className="group relative flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-black px-10 py-5 rounded-sm skew-x-[-12deg] transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-95">
                   <div className="skew-x-[12deg] flex items-center gap-3 uppercase tracking-widest text-sm">
@@ -93,7 +78,6 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Conditional Button: Publish Event (For Organizers) */}
               {user && isOrganizer && (
                 <button className="group relative flex items-center gap-3 bg-orange-500 hover:bg-orange-600 text-white font-black px-10 py-5 rounded-sm skew-x-[-12deg] transition-all shadow-[0_0_20px_rgba(249,115,22,0.4)] active:scale-95">
                   <div className="skew-x-[12deg] flex items-center gap-3 uppercase tracking-widest text-sm">
@@ -102,7 +86,6 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Secondary Explore Button */}
               <button className="flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-black px-10 py-5 rounded-sm skew-x-[-12deg] border border-white/20 transition-all active:scale-95 group">
                 <div className="skew-x-[12deg] flex items-center gap-3 uppercase tracking-widest text-sm">
                   <Trophy size={20} className="group-hover:text-yellow-400 transition-colors" /> EXPLORE NOW
@@ -112,7 +95,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Dynamic Progress Line Indicators */}
         <div className="absolute bottom-10 left-10 right-10 flex gap-3 z-20">
           {images.map((_, i) => (
             <div key={i} className="h-[4px] flex-1 bg-white/10 rounded-full overflow-hidden">
@@ -130,7 +112,7 @@ export default function Home() {
       </div>
 
 
-      {/* CSS For Progress Animation */}
+      {/* CSS Animation */}
       <style>{`
         @keyframes progress {
           from { width: 0%; }

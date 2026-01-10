@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Rocket, UserPlus } from "lucide-react";
-import stadium1 from "../assets/image/soccer-game-concept.jpg";
-import stadium2 from "../assets/image/cricket-match-with-player.jpg";
-import stadium3 from "../assets/image/cyclist-riding-bicycle-nature.jpg";
 
 export default function Index() {
   const images = [
-    stadium1,
-    stadium2,
-    stadium3
+    "https://i.ibb.co/BV3y1LqB/soccer-game-concept.jpg",
+    "https://i.ibb.co/jv71yJ4c/cricket-match-with-player.jpg",
+    "https://i.ibb.co/HLg9wLbC/cyclist-riding-bicycle-nature.jpg"
   ];
 
   const [current, setCurrent] = useState(0);
@@ -23,7 +20,6 @@ export default function Index() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
-      {/* Background Slider with Ken Burns Effect */}
       {images.map((img, index) => (
         <div
           key={index}
@@ -36,10 +32,8 @@ export default function Index() {
         </div>
       ))}
 
-      {/* Overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
 
-      {/* Content Area */}
       <div className="relative z-20 container mx-auto h-full flex flex-col items-center justify-center px-4">
         <div className="max-w-4xl text-center space-y-8 animate-in fade-in zoom-in duration-1000">
           <h1 className="text-6xl md:text-9xl font-black italic tracking-tighter text-white uppercase drop-shadow-2xl">

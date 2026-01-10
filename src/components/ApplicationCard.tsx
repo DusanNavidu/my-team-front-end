@@ -16,7 +16,6 @@ export default function ApplicationCard({ app, handleStatusChange }: Props) {
     return (
         <div className="relative bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden flex flex-col md:flex-row group mb-4">
             
-            {/* 🎞️ Left: Event Brief */}
             <div className="relative w-full md:w-48 h-32 md:h-auto overflow-hidden shrink-0">
                 <img 
                     src={app.eventId?.eventImageURL || "https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80"} 
@@ -31,7 +30,6 @@ export default function ApplicationCard({ app, handleStatusChange }: Props) {
                 </div>
             </div>
 
-            {/* 👤 Right: Player Details & Actions */}
             <div className="p-5 flex-1 flex-col lg:flex-row items-center justify-between gap-4">
                 
                 <div className="flex items-center gap-4 w-full">
@@ -65,7 +63,6 @@ export default function ApplicationCard({ app, handleStatusChange }: Props) {
                     </div>
                 </div>
 
-                {/* 🏷️ Right Side Actions & Status */}
                 <div className="flex items-center gap-3 w-full lg:w-auto justify-end">
                     <div className="hidden xl:block mr-2">
                         <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border-2

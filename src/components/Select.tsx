@@ -41,14 +41,13 @@ export default function Select({
             <option
               key={option.value}
               value={option.value}
-              className="text-black bg-white/90" // Make option text visible
+              className="text-black bg-white/90"
             >
               {option.label}
             </option>
           ))}
         </select>
 
-        {/* Dropdown Arrow */}
         <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
           <svg
             className="w-5 h-5 text-white"

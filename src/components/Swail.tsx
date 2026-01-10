@@ -9,7 +9,7 @@ type AlertProps = {
     icon: SweetAlertIcon;
     title: string;
     text?: string;
-    timer?: number; // optional auto-close
+    timer?: number;
 };
 
 export const showAlert = ({ icon, title, text, timer }: AlertProps) => {
@@ -18,9 +18,9 @@ export const showAlert = ({ icon, title, text, timer }: AlertProps) => {
         title,
         text,
         timer,
-        background: "#1f2937", // dark background
-        color: "#fbbf24",      // amber/yellow text
-        confirmButtonColor: "#2563eb", // blue button
+        background: "#1f2937",
+        color: "#fbbf24",
+        confirmButtonColor: "#2563eb",
         iconColor: icon === "success" ? "#22c55e" : icon === "error" ? "#ef4444" : "#f59e0b",
         timerProgressBar: true,
     });

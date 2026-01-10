@@ -1,18 +1,14 @@
-// src/components/Button.tsx
-
 import React, { useState } from 'react';
 
-// Button props definition
 interface ButtonProps {
     children: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     type?: 'submit' | 'button' | 'reset';
     color?: 'blue' | 'green' | 'red' | 'gray' | 'black' | 'yellow' | 'orange' | 'darkBlue' | 'white'; // Button Color variants
     disabled?: boolean;
-    className?: string; // Additional classes
+    className?: string;
 }
 
-// Color styles mapping
 const colorClasses = {
     blue: 'bg-blue-600 hover:bg-blue-700',
     green: 'bg-green-600 hover:bg-green-700',
@@ -25,7 +21,6 @@ const colorClasses = {
     white: 'bg-white text-gray-800 hover:bg-gray-100 border border-gray-300',
 };
 
-// Ripple Animation Type Definition
 interface Ripple {
     x: number;
     y: number;
@@ -33,7 +28,6 @@ interface Ripple {
     key: number;
 }
 
-// Global CSS Animation Definition (for the ripple effect)
 const rippleStyles = `
     @keyframes ripple-effect {
         0% {

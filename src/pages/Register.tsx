@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { register } from "../service/auth";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { UserPlus, Mail, Lock, User, Zap } from "lucide-react";
-import stadiumBg from "../assets/image/american-football-player-wearing-equipment.jpg";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -22,20 +21,17 @@ export default function Register() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-black overflow-hidden p-4 md:p-10">
-      {/* Background Image with Ken Burns Effect */}
       <div className="absolute inset-0 z-0">
         <img 
-          src={stadiumBg} 
+          src={"https://i.ibb.co/Tqc4k2Bj/american-football-player-wearing-equipment.jpg"} 
           className="w-full h-full object-cover opacity-40 scale-110 animate-ken-burns scale-x-[-1]"
           alt=""
         />
-        {/* Mirror the gradient as well to match Login */}
         <div className="absolute inset-0 bg-gradient-to-bl from-blue-900/40 via-black/60 to-black" />
       </div>
 
       <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row-reverse items-center justify-center gap-10 lg:gap-20">
         
-        {/* Right Side: Brand Identity (Mirror of Login Left side) */}
         <div className="hidden lg:block flex-1 space-y-4 text-right animate-in slide-in-from-right duration-1000">
           <div className="flex items-center justify-end gap-3 text-blue-500 font-black tracking-[0.4em] uppercase text-sm mb-4">
              <span>Official Recruitment</span> <Zap size={20} fill="currentColor" />
@@ -48,7 +44,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Left Side: Blur Form Card */}
         <div className="w-full max-w-[500px] glass-card p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl animate-in zoom-in duration-500">
           <div className="mb-10 text-center lg:text-left">
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Register</h2>

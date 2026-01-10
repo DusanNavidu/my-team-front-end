@@ -18,7 +18,6 @@ export default function Footer() {
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           
-          {/* Brand Section */}
           <div className="space-y-4">
             <h2 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-white to-blue-600 bg-clip-text text-transparent drop-shadow-lg tracking-tighter">
               MY TEAM
@@ -32,7 +31,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Navigation */}
           <div>
             <h4 className="text-white font-black uppercase text-xs tracking-[0.2em] mb-6 pb-2 border-b border-gray-800 w-fit">
               Navigation
@@ -52,7 +50,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Support */}
           <div>
             <h4 className="text-white font-black uppercase text-xs tracking-[0.2em] mb-6 pb-2 border-b border-gray-800 w-fit">
               Support
@@ -79,7 +76,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Connect & Community */}
           <div>
             <h4 className="text-white font-black uppercase text-xs tracking-[0.2em] mb-6 pb-2 border-b border-gray-800 w-fit">
               Connect
@@ -101,7 +97,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
             <p>© {currentYear} MY TEAM - Official Identity Platform</p>

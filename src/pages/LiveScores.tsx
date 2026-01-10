@@ -1,8 +1,5 @@
-// src/pages/LiveScores.tsx (FINAL FIX)
-
 import React, { useState } from 'react';
 
-// Live Score Card සඳහා මූලික Data Structure එක
 interface LiveScore {
     id: number;
     sport: 'Cricket' | 'Football' | 'Rugby';
@@ -12,7 +9,6 @@ interface LiveScore {
     time: string;
 }
 
-// Static/Dummy Live Score Data (API Response එකක් ලෙස උපකල්පනය කරමු)
 const dummyScores: LiveScore[] = [
     { id: 1, sport: 'Cricket', match: 'SL vs IND', score: 'SL 150/5 (20)', status: 'Live', time: 'Innings Break' },
     { id: 2, sport: 'Football', match: 'Chelsea vs Arsenal', score: '1 - 0', status: 'Live', time: '75th Min' },
@@ -21,7 +17,6 @@ const dummyScores: LiveScore[] = [
     { id: 5, sport: 'Football', match: 'Man Utd vs Liverpool', score: 'Finished', status: 'Finished', time: '2 - 2' },
 ];
 
-// Reusable Score Card Component (මෙම file එක ඇතුළතම භාවිතා කරමු)
 const ScoreCard: React.FC<{ score: LiveScore }> = ({ score }) => {
     
     let statusClass = '';
@@ -52,7 +47,6 @@ const ScoreCard: React.FC<{ score: LiveScore }> = ({ score }) => {
 export default function LiveScores() {
     const [activeTab, setActiveTab] = useState<'All' | 'Cricket' | 'Football' | 'Rugby'>('All');
 
-    // Filter scores based on the active tab
     const filteredScores = dummyScores.filter(score => 
         activeTab === 'All' ? true : score.sport === activeTab
     );
@@ -82,7 +76,6 @@ export default function LiveScores() {
                 ))}
             </div>
 
-            {/* --- Scores Grid --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredScores.length > 0 ? (
                     filteredScores.map(score => (

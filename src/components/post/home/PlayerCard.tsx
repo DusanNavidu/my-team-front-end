@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getPlayerProfiles } from '../../../service/auth'; 
 import { UserPlus, X } from 'lucide-react';
-import { Link } from 'react-router-dom'; // 👈 Link එකතු කරන්න
+import { Link } from 'react-router-dom';
 
 export default function PlayerCard() {
     const [players, setPlayers] = useState<any[]>([]);
@@ -38,24 +38,20 @@ export default function PlayerCard() {
 
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-6 px-2 snap-x">
                 {players.map((player) => (
-                    /* ✅ මුළු කාඩ් එකම Link එකක් බවට පත් කිරීම */
                     <Link 
                         to={`/player-profile/${player._id}`} 
                         key={player._id} 
                         className="min-w-[170px] max-w-[170px] bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col items-center p-5 relative snap-start cursor-pointer"
                     >
-                        {/* Close button (Propagation නැවැත්වීමට e.preventDefault භාවිතා කළ හැක) */}
                         <button 
                             onClick={(e) => {
-                                e.preventDefault(); // Profile එකට යන එක නවත්වයි
-                                // මකන logic එක මෙතැනට
+                                e.preventDefault();
                             }}
                             className="absolute top-3 right-3 text-gray-300 hover:text-gray-500 z-10"
                         >
                             <X size={14} />
                         </button>
 
-                        {/* Player Image */}
                         <div className="relative mb-3">
                             <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-50 shadow-sm group-hover:scale-105 transition-transform duration-500">
                                 <img 
@@ -67,7 +63,6 @@ export default function PlayerCard() {
                             <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                         </div>
 
-                        {/* Player Info */}
                         <div className="text-center space-y-1 w-full px-1 mb-4">
                             <h4 className="font-black text-gray-900 uppercase tracking-tighter text-[13px] truncate">
                                 {player.fullname}
@@ -77,10 +72,9 @@ export default function PlayerCard() {
                             </p>
                         </div>
 
-                        {/* Action Button */}
                         <button 
                             className="w-full py-2.5 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-600 hover:text-white transition-all active:scale-95 font-black text-[10px] uppercase tracking-widest"
-                            onClick={(e) => e.preventDefault()} // Button එක එබූ විට Profile එකට යාම වැළැක්වීමට
+                            onClick={(e) => e.preventDefault()}
                         >
                             <UserPlus size={14} strokeWidth={3} />
                             Follow

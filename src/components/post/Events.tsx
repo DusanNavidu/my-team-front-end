@@ -18,7 +18,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
 
   const isPlayer = user?.roles?.includes("PLAYER");
   const isPast = moment().isAfter(moment(event.eventDate).endOf('day'));
-  // Modal එක විවෘත කළ විට දැනටමත් Apply කර ඇත්දැයි බලමු
   useEffect(() => {
     if (isModalOpen && isPlayer) {
       checkStatus();
@@ -48,7 +47,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
   return (
     <>
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden mb-8 transition-all hover:shadow-md">
-        {/* Header - Organizer Info */}
         <div className="p-6 flex items-center justify-between">
            <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100 bg-gray-50 shrink-0">
@@ -66,7 +64,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
            <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase">{event.EventStatus}</div>
         </div>
 
-        {/* Content Title */}
         <div className="px-6 pb-4">
            <h3 className="font-black text-gray-800 text-lg uppercase tracking-tight line-clamp-1">{event.eventName}</h3>
            <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-bold uppercase mt-1">
@@ -74,19 +71,16 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
            </div>
         </div>
 
-        {/* Image - 220px Fixed */}
         <div className="w-full max-h-220 bg-gray-50 overflow-hidden relative border-y border-gray-50">
            <img src={event.eventImageURL} className="w-full h-full object-cover" alt="Event" />
         </div>
 
-        {/* Footer Actions */}
         <div className="p-4 px-8 flex items-center justify-between bg-white">
            <div className="flex gap-6">
               <Heart size={20} className="text-gray-300 hover:text-red-500 cursor-pointer transition-colors" />
               <MessageCircle size={20} className="text-gray-300 hover:text-blue-500 cursor-pointer transition-colors" />
            </div>
            
-           {/* VIEW BUTTON */}
            <button 
               onClick={() => setIsModalOpen(true)}
               className="bg-zinc-900 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 active:scale-95 shadow-lg shadow-zinc-200"
@@ -96,10 +90,8 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
         </div>
       </div>
 
-      {/* 🚀 MODAL - VIEW FULL DETAILS */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
          <div className="max-w-2xl mx-auto p-2 overflow-y-auto max-h-[90vh] no-scrollbar">
-            {/* Modal Cover */}
             <div className="relative h-64 rounded-[2.5rem] overflow-hidden shadow-xl mb-6">
                <img src={event.eventImageURL} className="w-full h-full object-cover" alt="Event Cover" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -109,7 +101,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
                </div>
             </div>
 
-            {/* Info Grid */}
             <div className="grid grid-cols-2 gap-4 px-2">
                <div className="bg-gray-50 p-4 rounded-3xl border border-gray-100 flex items-center gap-3">
                   <Calendar className="text-blue-600" size={20} />
@@ -134,7 +125,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
                </div>
             </div>
 
-            {/* Description */}
             <div className="mt-6 px-2">
                <h4 className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-2"><Info size={14}/> About this Event</h4>
                <div className="bg-white border border-gray-100 p-5 rounded-3xl min-h-[120px] shadow-inner">
@@ -142,7 +132,6 @@ const EventCard: React.FC<{ event: EventData }> = ({ event }) => {
                </div>
             </div>
 
-            {/* ACTION BUTTON */}
             <div className="p-4 mt-4">
                {isPlayer ? (
                   isPast ? (

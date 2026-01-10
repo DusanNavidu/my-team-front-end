@@ -43,16 +43,13 @@ export default function AdminUsersManage() {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  // දත්ත ලබාගැනීමේ ප්‍රධාන function එක
   const loadData = useCallback(async (page: number, filter: string, query: string) => {
     setLoading(true);
     try {
       let res;
-      // සෙවුම් පදයක් තිබේ නම් searchUsers කැඳවයි
       if (query.trim()) {
         res = await searchUsers(query, page);
       } else {
-        // නැතහොත් ෆිල්ටරය අනුව අදාළ සර්විස් එක කැඳවයි
         switch (filter) {
           case "ORGANIZER":
             res = await getAllOrganizers(page);
@@ -83,7 +80,6 @@ export default function AdminUsersManage() {
     }
   }, []);
 
-  // Counts ලබාගැනීම
   const fetchCounts = useCallback(async () => {
     try {
       const [all, org, play, role, active, deactive] = await Promise.all([
@@ -114,7 +110,7 @@ export default function AdminUsersManage() {
   }, [currentPage, currentFilter, searchQuery, loadData]);
 
   const handleFilterChange = (filter: string) => {
-    setSearchQuery(""); // Filter එක වෙනස් කරන විට search එක clear කරයි
+    setSearchQuery("");
     setCurrentFilter(filter);
     setCurrentPage(1);
   };
@@ -122,7 +118,6 @@ export default function AdminUsersManage() {
   const handleSearchInput = (value: string) => {
     setSearchQuery(value);
     setCurrentPage(1);
-    // loadData ස්වයංක්‍රීයව useEffect එක හරහා කැඳවනු ලැබේ
   };
 
   const formatDate = (dateString: string) => {
@@ -156,7 +151,7 @@ export default function AdminUsersManage() {
     try {
       await changeUserStatus(user._id);
       loadData(currentPage, currentFilter, searchQuery);
-      fetchCounts(); // ස්ටේටස් එක වෙනස් වූ පසු counts update කරයි
+      fetchCounts();
     } catch (error) {
       alert("Status change failed");
     }
