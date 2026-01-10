@@ -646,7 +646,7 @@ export default function Profile() {
                   <Button color="black" onClick={handleOpenModal}>
                     <img
                       className="w-4"
-                      src="src/assets/image/compose (1).png"
+                      src={"https://i.ibb.co/svfktKvj/compose-1.png"}
                       alt=""
                     />
                   </Button>
